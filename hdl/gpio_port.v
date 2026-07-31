@@ -17,5 +17,3 @@ module gpio_port #(
   endgenerate
 
 endmodule
-
-

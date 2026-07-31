@@ -10,6 +10,7 @@ NAME := PICORV32_Module# := se usa para valores constantes
 BASICBLOCKS := ../mods/basicblocks
 MODULES= modules
 HDL := hdl
+AIP := hdl/AIP
 FIRMWARE := firmware
 SIM := simulation
 
@@ -20,6 +21,12 @@ GCC_WARNS += -Wredundant-decls -Wstrict-prototypes -Wmissing-prototypes -pedanti
 TOOLCHAIN_PREFIX = $(RISCV_GNU_TOOLCHAIN_INSTALL_PREFIX)/bin/riscv64-unknown-elf-
 COMPRESSED_ISA = C
 
+synth_pwm: $(HDL)/pwm.v $(HDL)/tb_ID00005010.v $(HDL)/ID00005010* $(HDL)/prescaler.v $(AIP)/*.v
+	$(IVERILOG) $^ -o $(SIM)/pwm.vvp
+
+sim_pwm: synth_pwm
+	vvp $(SIM)/pwm.vvp
+	mv Test_id00005010.vcd $(SIM)/Test_id00005010.vcd
 
 synth_soc: $(HDL)/*.v #testbench_TOP_SOC.v pico_mini_soc.v pico_mini.v simpleuart.v picorv32_Small.v picorv32.v
 	#-- Compilar
@@ -61,6 +68,6 @@ clean:
                 $(FIRMWARE)/*.elf $(FIRMWARE)/*.bin $(FIRMWARE)/*.hex $(FIRMWARE)/*.txt $(FIRMWARE)/*.map \
                 testbench.vvp \
                 *.vvp *.vvp testbench.vcd *.trace 
-	rm -rf $(SIM)/*
+	find $(SIM) -maxdepth 1 -type f ! -name "*.gtkw" -delete
 
 

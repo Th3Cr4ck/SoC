@@ -1,11 +1,22 @@
 module gpio #(
-    parameter PORT_WIDTH = 16
+    parameter PORT_WIDTH = 16,
+    parameter REG_WIDTH  = 32
 ) (
     input clk,
     input rstn,
-    inout [PORT_WIDTH-1:0] io_port
+    inout [PORT_WIDTH-1:0] io_port,
     // AIP
+    input  [REG_WIDTH-1:0] i_dataInAIP,
+    input  [REG_WIDTH-1:0] i_configAIP,
+    input                  i_writeAIP,
+    input                  i_readAIP,
+    input                  i_en,
+    output [REG_WIDTH-1:0] o_dataOutAIP,
+    output                 o_intAIP,
+    output                 o_startAIP
 );
+
+  wire [REG_WIDTH-1:0] w_dataConfigReg;
 
   reg  [PORT_WIDTH-1:0]   r_mode;   // Pin mode
   reg  [PORT_WIDTH-1:0]   r_odr;    // Output Data Register

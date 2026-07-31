@@ -7,6 +7,7 @@ module prescaler #(
 ) (
     input clk,
     input rst_n,
+    input en,
     input [WIDTH-1:0] i_prescaler_val,
     output reg o_tick
 );
@@ -19,7 +20,7 @@ module prescaler #(
       o_tick <= 0;
     end
 
-    else begin
+    else if(en) begin
       if (r_count == (i_prescaler_val - 1)) begin
         o_tick <= 1'b1;
         r_count <= 0;

@@ -4,6 +4,8 @@ module tb_pwm;
 
   reg                   clk;
   reg                   rst_n;
+  reg                   r_en;
+  reg                   r_output_en;
   reg  [DATA_WIDTH-1:0] r_prescaler;
   reg  [DATA_WIDTH-1:0] r_period;
   reg  [DATA_WIDTH-1:0] r_duty;
@@ -16,6 +18,8 @@ module tb_pwm;
   ) u_pwm (
       .clk(clk),
       .rst_n(rst_n),
+      .i_en(r_en),
+      .i_output_en(r_output_en),
       .i_prescaler(r_prescaler),
       .i_period(r_period),
       .i_duty(r_duty),
@@ -32,6 +36,8 @@ module tb_pwm;
     $dumpvars(0);
     clk = 0;
     rst_n = 1;
+    r_en = 1;
+    r_output_en = 1;
     r_prescaler = 4;
     r_period = 8;
     r_duty = 6;
@@ -56,6 +62,25 @@ module tb_pwm;
     rst_n = 0;
     @(posedge clk);
     rst_n = 1;
+    @(posedge clk);
+
+    repeat ((r_prescaler * r_period + 10) * 2) begin
+      @(posedge clk);
+    end
+
+    @(posedge clk);
+    @(posedge clk);
+    @(posedge clk);
+
+    r_output_en = 0;
+    @(posedge clk);
+
+    repeat ((r_prescaler * r_period + 10) * 2) begin
+      @(posedge clk);
+    end
+
+    r_output_en = 1;
+    r_en = 0;
     @(posedge clk);
 
     repeat ((r_prescaler * r_period + 10) * 2) begin
