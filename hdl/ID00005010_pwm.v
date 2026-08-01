@@ -3,14 +3,14 @@
 module ID00005010_pwm (
     input         i_clk,
     input         i_rst,
-    input         i_en, // AIP enable
-    input  [31:0] i_dataIn,
-    input  [ 4:0] i_config,
-    input         i_write,
-    input         i_read,
-    input         i_start, // Periph enable
-    output [31:0] o_dataOut,
-    output        o_int,
+    input         i_enAIP, // AIP enable
+    input  [31:0] i_dataInAIP,
+    input  [ 4:0] i_configAIP,
+    input         i_writeAIP,
+    input         i_readAIP,
+    input         i_startAIP, // Periph enable
+    output [31:0] o_dataOutAIP,
+    output        o_intAIP,
     output        o_pwm
 );
 
@@ -21,19 +21,20 @@ module ID00005010_pwm (
   wire [DATA_WIDTH*2-1:0] w_dataConfig;
   wire w_start;
 
+  // AIP
   ID00005010_aip u_aip (
       .clk(i_clk),
       .rst(i_rst),
-      .en (i_en),
+      .en (i_enAIP),
 
       //--- AIP ---//
-      .dataInAIP(i_dataIn),
-      .dataOutAIP(o_dataOut),
-      .configAIP(i_config),
-      .readAIP(i_read),
-      .writeAIP(i_write),
-      .startAIP(i_start),
-      .intAIP(o_int),
+      .dataInAIP(i_dataInAIP),
+      .dataOutAIP(o_dataOutAIP),
+      .configAIP(i_configAIP),
+      .readAIP(i_readAIP),
+      .writeAIP(i_writeAIP),
+      .startAIP(i_startAIP),
+      .intAIP(o_intAIP),
 
       //--- IP-core ---//
       .rdDataConfigReg(w_dataConfig),
@@ -42,6 +43,7 @@ module ID00005010_pwm (
       .startIPcore(w_start)
   );
 
+  // Core
   pwm #(
       .DATA_WIDTH(DATA_CONF_WIDTH)
   ) u_pwmCore (

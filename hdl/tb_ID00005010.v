@@ -112,7 +112,7 @@ module tb_ID00005010 #(
     //
 
     #10000;
-    
+
     // Change config
     $display("%7T writing to CONFREG Register", $time);
     writeConfReg(id00001001_CCONFREG, 64'h0003_0006_0008_0004, 2, 0);  // 
@@ -127,35 +127,21 @@ module tb_ID00005010 #(
   always #(CYCLE / 2) clk = !clk;
 
 
-  
+
   ID00005010_pwm u_pwmModule (
-      .i_clk      (clk),        // Clock
-      .i_rst      (rst_a),      // reset low active
-      .i_en     (1'b1),
-      .i_dataIn (dataInAIP),
-      .i_config (configAIP),
-      .i_write  (writeAIP),
-      .i_read   (readAIP),
-      .i_start  (startAIP),
-      .o_dataOut(dataOutAIP),
-      .o_int    (intAIP),
-      .o_pwm    (w_pwm)
+      .i_clk       (clk),         // Clock
+      .i_rst       (rst_a),       // reset low active
+      .i_enAIP     (1'b1),
+      .i_dataInAIP (dataInAIP),
+      .i_configAIP (configAIP),
+      .i_writeAIP  (writeAIP),
+      .i_readAIP   (readAIP),
+      .i_startAIP  (startAIP),
+      .o_dataOutAIP(dataOutAIP),
+      .o_intAIP    (intAIP),
+      .o_pwm       (w_pwm)
   );
 
-  // ID00001001_dummy AIP_DUMMY_Module (
-  //     .clk      (clk),        // Clock
-  //     .rst_a    (rst_a),      // reset low active
-  //     .en_s     (1'b1),
-  //     //-------------------------- To/From NIc --------------------------//
-  //     .conf_dbus(configAIP),  //Used for protocol to determine different actions types
-  //     .read     (readAIP),    //Used for protocol to read different information types
-  //     .write    (writeAIP),   //Used for protocol to write different information types
-  //     .start    (startAIP),   //Used to start the IP-core
-  //     .data_in  (dataInAIP),  //different data in information types
-  //     .int_req  (intAIP),     //Interruption request
-  //     .data_out (dataOutAIP)  //different data out information types
-  //
-  // );
 
 
   //*******************************************************************
@@ -301,9 +287,6 @@ module tb_ID00005010 #(
 
   task start;
     begin
-      // rst_a = 1'b0;
-      // #(CYCLE);
-      // rst_a = 1'b0;
       startAIP = 1'b1;
       #(CYCLE);
       // startAIP = 1'b0; // Para esta prueba mantener start activo
