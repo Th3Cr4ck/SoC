@@ -1,0 +1,80 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Sun Aug  2 00:41:23 2026
+[*]
+[dumpfile] "/home/isaac/Documents/Cinvestav/Digital/Proyecto final/simulation/Test_id00005020.vcd"
+[dumpfile_mtime] "Sun Aug  2 00:11:22 2026"
+[dumpfile_size] 36651
+[savefile] "/home/isaac/Documents/Cinvestav/Digital/Proyecto final/simulation/gpio.gtkw"
+[timestart] 856
+[size] 2048 1073
+[pos] -1 -1
+*-5.400000 960 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_ID00005020.
+[treeopen] tb_ID00005020.u_gpio.
+[sst_width] 276
+[signals_width] 416
+[sst_expanded] 1
+[sst_vpaned_height] 324
+@28
+tb_ID00005020.clk
+tb_ID00005020.rst_a
+tb_ID00005020.en_s
+@22
+tb_ID00005020.configAIP[4:0]
+tb_ID00005020.dataInAIP[31:0]
+tb_ID00005020.dataOutAIP[31:0]
+@28
+tb_ID00005020.readAIP
+tb_ID00005020.startAIP
+tb_ID00005020.writeAIP
+@22
+tb_ID00005020.dataReg[63:0]
+@28
+[color] 6
+tb_ID00005020.u_gpio.w_dataConfigRegWritten
+tb_ID00005020.opMode
+@22
+tb_ID00005020.ioMode[15:0]
+@c00022
+tb_ID00005020.br[15:0]
+@28
+(0)tb_ID00005020.br[15:0]
+(1)tb_ID00005020.br[15:0]
+(2)tb_ID00005020.br[15:0]
+(3)tb_ID00005020.br[15:0]
+(4)tb_ID00005020.br[15:0]
+(5)tb_ID00005020.br[15:0]
+(6)tb_ID00005020.br[15:0]
+(7)tb_ID00005020.br[15:0]
+(8)tb_ID00005020.br[15:0]
+(9)tb_ID00005020.br[15:0]
+(10)tb_ID00005020.br[15:0]
+(11)tb_ID00005020.br[15:0]
+(12)tb_ID00005020.br[15:0]
+(13)tb_ID00005020.br[15:0]
+(14)tb_ID00005020.br[15:0]
+(15)tb_ID00005020.br[15:0]
+@1401200
+-group_end
+@22
+tb_ID00005020.bs[15:0]
+tb_ID00005020.ext_data[15:0]
+[color] 3
+tb_ID00005020.ext_enable[15:0]
+tb_ID00005020.io_port[15:0]
+@23
+tb_ID00005020.u_gpio.w_idr[15:0]
+@22
+tb_ID00005020.u_gpio.r_odr[15:0]
+tb_ID00005020.u_gpio.w_odr_bsrr[15:0]
+tb_ID00005020.u_gpio.w_odr_host[15:0]
+@200
+-GPIO_PORT
+@22
+tb_ID00005020.u_gpio.u_gpio_port.i_mode[15:0]
+tb_ID00005020.u_gpio.u_gpio_port.i_port_out[15:0]
+tb_ID00005020.u_gpio.u_gpio_port.io_port[15:0]
+tb_ID00005020.u_gpio.u_gpio_port.o_port_in[15:0]
+[pattern_trace] 1
+[pattern_trace] 0

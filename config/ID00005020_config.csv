@@ -1,0 +1,8 @@
+type,alphaID,numID,size,mode,description
+IPID,GPIO,0x00005020,,,GPIO
+CFG,MMemOut_IDR,0b00000,2,R,Input Data Register
+CFG,AMemOut_IDR,0b00001,1,W,Set Read Address Pointer of MMemOut_IDR
+CFG,CConfigReg,0b00010,2,W,ODR - Mode - BSRR
+CFG,AConfigReg,0b00011,1,W,Set Write Address of CConfigReg
+CFG,STATUS,0b11110,1,B,IP status register
+CFG,IPID,0b11111,1,R,IP ID

@@ -28,6 +28,13 @@ sim_pwm: synth_pwm
 	vvp $(SIM)/pwm.vvp
 	mv Test_id00005010.vcd $(SIM)/Test_id00005010.vcd
 
+synth_gpio: $(HDL)/gpio_port.v $(HDL)/tb_ID00005020.v $(HDL)/ID00005020* $(AIP)/*.v $(HDL)/simple_dual_port_ram_single_clk.v
+	$(IVERILOG) $^ -o $(SIM)/gpio.vvp
+
+sim_gpio: synth_gpio
+	vvp $(SIM)/gpio.vvp
+	mv Test_id00005020.vcd $(SIM)/Test_id00005020.vcd
+
 synth_soc: $(HDL)/*.v #testbench_TOP_SOC.v pico_mini_soc.v pico_mini.v simpleuart.v picorv32_Small.v picorv32.v
 	#-- Compilar
 	$(IVERILOG) $^ -o $(SIM)/$(NAME)_tb.out
