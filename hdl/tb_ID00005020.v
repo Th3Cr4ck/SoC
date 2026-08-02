@@ -12,7 +12,7 @@ module tb_ID00005020 #(
   //----------------------------------------------------------
   localparam CYCLE = 'd20,  // Define the clock work cycle in ns (user)
   DATAWIDTH = 'd32,  // AIP BITWIDTH
-  MAX_SIZE_MEM = 'd8,  // MAX MEMORY SIZE AMONG ALL AIP MEMORIES (Defined by the user)
+  MAX_SIZE_MEM = 'd2,  // MAX MEMORY SIZE AMONG ALL AIP MEMORIES (Defined by the user)
   //------------------------------------------------------------
   //..................CONFIG VALUES.............................
   //------------------------------------------------------------           
@@ -57,6 +57,7 @@ module tb_ID00005020 #(
   reg [PORT_WIDTH-1:0] br;
   reg [PORT_WIDTH-1:0] bs;
   reg [63:0] dataReg;
+  reg [DATAWIDTH-1:0] rdMemOut;
 
   // Simula el dispositivo externo conectado al GPIO
   reg [PORT_WIDTH-1:0] ext_data;
@@ -74,13 +75,14 @@ module tb_ID00005020 #(
     end
   endgenerate
 
+  // DUMP
   initial begin
     $dumpfile("Test_id00005020.vcd");
     $dumpvars(0, tb_ID00005020);
     $dumpall;
   end
 
-
+  // SIM
   initial begin
     clk          = 1'b1;
     en_s         = 1'b1;
@@ -110,7 +112,7 @@ module tb_ID00005020 #(
     // $display("%7T writing to id00001001_MDATAIN0 Register", $time);
     // writeMem(id00001001_MDATAIN0, 32'h0000_beaf, 1, 0);  // 
 
-    /* CASO 1: GPIO como salida ODR*/
+    /*----------- CASO 1: GPIO como salida ODR ------------------*/
     opMode = 1'b0;
     ioMode = 16'hFFFF;
     br = 16'b0;
@@ -125,6 +127,13 @@ module tb_ID00005020 #(
 
     #50;
 
+    readMem(id00001001_MMEMOUT0, id00001001_result_packed, 1, 0);
+    rdMemOut = id00001001_result_packed[31:0];
+    $display("IDR expected: beaf");
+    $display("IDR readMem:  %04X", getIDR(rdMemOut));
+    $display("ODR expected: beaf");
+    $display("ODR readMem:  %04X", getODR(rdMemOut));
+
     /* CASO 2: GPIO como salida BSRR*/
     opMode = 1'b1;
     br = 16'h000F;
@@ -134,6 +143,13 @@ module tb_ID00005020 #(
     $display("%7T writing to CONFREG Register", $time);
     writeConfReg(id00001001_CCONFREG, dataReg, 2, 0);  // 
     #50;
+
+    readMem(id00001001_MMEMOUT0, id00001001_result_packed, 1, 0);
+    rdMemOut = id00001001_result_packed[31:0];
+    $display("IDR expected: fea0");
+    $display("IDR readMem:  %04X", getIDR(rdMemOut));
+    $display("ODR expected: fea0");
+    $display("ODR readMem:  %04X", getODR(rdMemOut));
 
     /* CASO 3: GPIO como entrada */
     ioMode = 16'b0;
@@ -147,6 +163,13 @@ module tb_ID00005020 #(
 
     #50;
 
+    readMem(id00001001_MMEMOUT0, id00001001_result_packed, 1, 0);
+    rdMemOut = id00001001_result_packed[31:0];
+    $display("IDR expected: 1234");
+    $display("IDR readMem:  %04X", getIDR(rdMemOut));
+    $display("ODR expected: fea0");
+    $display("ODR readMem:  %04X", getODR(rdMemOut));
+
     /* CASO 4: GPIO como entrada */
     dataReg = dataRegBuild(opMode, ioMode, br, bs);
 
@@ -154,6 +177,13 @@ module tb_ID00005020 #(
     writeConfReg(id00001001_CCONFREG, dataReg, 2, 0);  // 
     ext_data = 16'hABCD;
     #50;
+
+    readMem(id00001001_MMEMOUT0, id00001001_result_packed, 1, 0);
+    rdMemOut = id00001001_result_packed[31:0];
+    $display("IDR expected: abcd");
+    $display("IDR readMem:  %04X", getIDR(rdMemOut));
+    $display("ODR expected: fea0");
+    $display("ODR readMem:  %04X", getODR(rdMemOut));
 
     /* CASO 5: GPIO como entrada/salida */
     ioMode = 16'hFF00;
@@ -163,6 +193,13 @@ module tb_ID00005020 #(
     writeConfReg(id00001001_CCONFREG, dataReg, 2, 0);  // 
     ext_enable = 16'h00FF;
     #50;
+
+    readMem(id00001001_MMEMOUT0, id00001001_result_packed, 1, 0);
+    rdMemOut = id00001001_result_packed[31:0];
+    $display("IDR expected: fecd");
+    $display("IDR readMem:  %04X", getIDR(rdMemOut));
+    $display("ODR expected: fea0");
+    $display("ODR readMem:  %04X", getODR(rdMemOut));
 
     #10000;
 
@@ -205,6 +242,16 @@ module tb_ID00005020 #(
     input [PORT_WIDTH-1:0] bs;
 
     dataRegBuild = {15'b0, opMode, ioMode, br, bs};
+  endfunction
+
+  function automatic [PORT_WIDTH-1:0] getIDR;
+    input [DATAWIDTH-1:0] dataMem;
+    getIDR = dataMem[15:0];
+  endfunction
+
+  function automatic [PORT_WIDTH-1:0] getODR;
+    input [DATAWIDTH-1:0] dataMem;
+    getODR = dataMem[31:16];
   endfunction
 
   task getID;

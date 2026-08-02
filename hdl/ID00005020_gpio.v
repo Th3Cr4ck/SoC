@@ -81,7 +81,7 @@ module ID00005020_gpio #(
       .intAIP(o_intAIP),
 
       //--- IP-core ---//
-      .wrDataMemOut_0({16'b0, w_idr}),
+      .wrDataMemOut_0({r_odr, w_idr}),
       .wrAddrMemOut_0({MEM_ADDR_MAX_WIDTH{1'b0}}),
       .wrEnMemOut_0({1'b1}),
       .rdDataConfigReg(w_dataConfig),
@@ -93,7 +93,9 @@ module ID00005020_gpio #(
 
   always @(posedge i_clk or negedge i_rst) begin
 
-    if (!i_rst) r_odr <= {PORT_WIDTH{1'b0}};
+    if (!i_rst) begin
+      r_odr <= {PORT_WIDTH{1'b0}};
+    end
 
     else if (w_dataConfigRegWritten)
       if (w_opMode) 
