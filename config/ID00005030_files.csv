@@ -1,0 +1,5 @@
+type,name
+top,ID00005030_aip
+file,../basicblocks/memories/simple_dual_port_ram_single_clk.v
+file,../basicblocks/aip/aipModules.v
+file,./ID00005030_aip.v

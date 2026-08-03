@@ -1,0 +1,68 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Mon Aug  3 16:03:54 2026
+[*]
+[dumpfile] "/home/isaac/Documents/Cinvestav/Digital/Proyecto final/simulation/Test_id00005030.vcd"
+[dumpfile_mtime] "Mon Aug  3 16:01:18 2026"
+[dumpfile_size] 62164
+[savefile] "/home/isaac/Documents/Cinvestav/Digital/Proyecto final/simulation/cordic.gtkw"
+[timestart] 599
+[size] 1920 1033
+[pos] -1 -1
+*-6.000000 1682 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_ID00005020.
+[treeopen] tb_ID00005020.u_cordic.
+[treeopen] tb_ID00005020.u_cordic.u_aip.
+[treeopen] tb_ID00005020.u_cordic.u_aip.AIP.
+[treeopen] tb_ID00005020.u_cordic.u_aip.AIP.MEMOUT[0].
+[sst_width] 276
+[signals_width] 424
+[sst_expanded] 1
+[sst_vpaned_height] 309
+@200
+-AIP
+@28
+tb_ID00005020.u_cordic.i_clk
+@22
+tb_ID00005020.u_cordic.i_configAIP[4:0]
+tb_ID00005020.u_cordic.i_dataInAIP[31:0]
+@28
+tb_ID00005020.u_cordic.i_enAIP
+tb_ID00005020.u_cordic.i_readAIP
+tb_ID00005020.u_cordic.i_rst
+@29
+tb_ID00005020.u_cordic.i_startAIP
+@28
+tb_ID00005020.u_cordic.i_writeAIP
+@24
+tb_ID00005020.u_cordic.o_dataOutAIP[31:0]
+@28
+tb_ID00005020.u_cordic.o_intAIP
+@200
+-MEM WRITE
+@28
+tb_ID00005020.u_cordic.state[2:0]
+tb_ID00005020.u_cordic.next[2:0]
+tb_ID00005020.u_cordic.r_enMemOut
+@24
+tb_ID00005020.u_cordic.r_addrMemOut[1:0]
+tb_ID00005020.u_cordic.r_dataMemOut[31:0]
+@200
+-CORDIC
+@28
+tb_ID00005020.u_cordic.r_busy
+[color] 1
+tb_ID00005020.u_cordic.r_done
+tb_ID00005020.u_cordic.w_busy_core
+[color] 1
+tb_ID00005020.u_cordic.w_done_core
+tb_ID00005020.u_cordic.w_opMode
+@24
+tb_ID00005020.u_cordic.w_xIn[12:0]
+tb_ID00005020.u_cordic.w_yIn[12:0]
+tb_ID00005020.u_cordic.w_zIn[12:0]
+tb_ID00005020.u_cordic.w_xOut[12:0]
+tb_ID00005020.u_cordic.w_yOut[12:0]
+tb_ID00005020.u_cordic.w_zOut[12:0]
+[pattern_trace] 1
+[pattern_trace] 0

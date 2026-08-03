@@ -35,6 +35,7 @@ module simple_dual_port_ram_single_clk
         end
         
         data_output__o <= RAM_Structure[Read_address_i];
+
     end
     
 endmodule

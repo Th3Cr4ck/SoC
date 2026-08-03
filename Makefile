@@ -11,6 +11,7 @@ BASICBLOCKS := ../mods/basicblocks
 MODULES= modules
 HDL := hdl
 AIP := hdl/AIP
+CORDIC := hdl/cordic
 FIRMWARE := firmware
 SIM := simulation
 
@@ -35,7 +36,15 @@ sim_gpio: synth_gpio
 	vvp $(SIM)/gpio.vvp
 	mv Test_id00005020.vcd $(SIM)/Test_id00005020.vcd
 
+synth_cordic: $(CORDIC)/*.v $(CORDIC)/*.sv $(HDL)/ID00005030* $(HDL)/tb_ID00005030.v $(AIP)/*.v $(HDL)/simple_dual_port_ram_single_clk.v
+	$(IVERILOG) -g2012 $^ -o $(SIM)/cordic.vvp
+
+sim_cordic: synth_cordic
+	vvp $(SIM)/cordic.vvp
+	mv Test_id00005030.vcd $(SIM)/Test_id00005030.vcd
+
 synth_soc: $(HDL)/*.v #testbench_TOP_SOC.v pico_mini_soc.v pico_mini.v simpleuart.v picorv32_Small.v picorv32.v
+
 	#-- Compilar
 	$(IVERILOG) $^ -o $(SIM)/$(NAME)_tb.out
 
