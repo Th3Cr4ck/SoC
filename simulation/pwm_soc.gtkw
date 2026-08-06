@@ -1,0 +1,123 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Thu Aug  6 20:59:31 2026
+[*]
+[dumpfile] "/home/isaac/Documents/Cinvestav/Digital/Proyecto final/simulation/Testbench_soc.vcd"
+[dumpfile_mtime] "Thu Aug  6 20:57:24 2026"
+[dumpfile_size] 26826294
+[savefile] "/home/isaac/Documents/Cinvestav/Digital/Proyecto final/simulation/pwm_soc.gtkw"
+[timestart] 601870000
+[size] 1920 1033
+[pos] -1 -1
+*-21.299999 608640000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench_TOP_SOC.
+[treeopen] testbench_TOP_SOC.uut.
+[treeopen] testbench_TOP_SOC.uut.u_pwm.
+[sst_width] 276
+[signals_width] 581
+[sst_expanded] 1
+[sst_vpaned_height] 309
+@200
+-PWM
+@28
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.clk
+@22
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.i_duty[15:0]
+@28
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.i_en
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.i_output_en
+@22
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.i_period[15:0]
+@28
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.i_polarity
+@22
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.i_prescaler[15:0]
+@28
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.o_pwm
+@23
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.r_count_pwm[15:0]
+@28
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.rst_n
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.w_rst_prescaler_n
+testbench_TOP_SOC.uut.u_pwm.u_pwmCore.w_tick
+@200
+-AIP
+@22
+testbench_TOP_SOC.uut.u_pwm.u_aip.AIP.IP_ID
+@28
+testbench_TOP_SOC.uut.u_pwm.u_aip.clk
+@24
+testbench_TOP_SOC.uut.u_pwm.u_aip.configAIP[4:0]
+@22
+testbench_TOP_SOC.uut.u_pwm.u_aip.dataInAIP[31:0]
+testbench_TOP_SOC.uut.u_pwm.u_aip.dataOutAIP[31:0]
+@28
+testbench_TOP_SOC.uut.u_pwm.u_aip.readAIP
+testbench_TOP_SOC.uut.u_pwm.u_aip.writeAIP
+testbench_TOP_SOC.uut.u_pwm.u_aip.en
+testbench_TOP_SOC.uut.u_pwm.u_aip.intAIP
+testbench_TOP_SOC.uut.u_pwm.u_aip.intIPCore_Done
+@22
+testbench_TOP_SOC.uut.u_pwm.u_aip.rdDataConfigReg[63:0]
+@28
+testbench_TOP_SOC.uut.u_pwm.u_aip.rst
+testbench_TOP_SOC.uut.u_pwm.u_aip.startAIP
+testbench_TOP_SOC.uut.u_pwm.u_aip.startIPcore
+testbench_TOP_SOC.uut.u_pwm.u_aip.statusIPcore_Busy
+@200
+-NAT_AIP
+@28
+testbench_TOP_SOC.uut.u_nat_pwm.busCtrl_doRead
+testbench_TOP_SOC.uut.u_nat_pwm.busCtrl_doWrite
+@22
+testbench_TOP_SOC.uut.u_nat_pwm.i_aip_dataOut[31:0]
+@28
+testbench_TOP_SOC.uut.u_nat_pwm.i_aip_enable
+testbench_TOP_SOC.uut.u_nat_pwm.i_aip_int
+testbench_TOP_SOC.uut.u_nat_pwm.i_aip_sel
+testbench_TOP_SOC.uut.u_nat_pwm.i_clk
+@22
+testbench_TOP_SOC.uut.u_nat_pwm.i_cpu_mem_addr[31:0]
+@28
+testbench_TOP_SOC.uut.u_nat_pwm.i_cpu_mem_valid
+testbench_TOP_SOC.uut.u_nat_pwm.o_cpu_mem_ready
+@22
+testbench_TOP_SOC.uut.u_nat_pwm.i_cpu_mem_wdata[31:0]
+@28
+testbench_TOP_SOC.uut.u_nat_pwm.i_cpu_mem_wen
+testbench_TOP_SOC.uut.u_nat_pwm.i_rst
+@24
+testbench_TOP_SOC.uut.u_nat_pwm.o_aip_config[4:0]
+@22
+testbench_TOP_SOC.uut.u_nat_pwm.o_aip_dataIn[31:0]
+@28
+testbench_TOP_SOC.uut.u_nat_pwm.o_aip_read
+testbench_TOP_SOC.uut.u_nat_pwm.o_aip_start
+testbench_TOP_SOC.uut.u_nat_pwm.o_aip_write
+testbench_TOP_SOC.uut.u_nat_pwm.o_core_int
+testbench_TOP_SOC.uut.u_nat_pwm.o_cpu_irq
+@22
+testbench_TOP_SOC.uut.u_nat_pwm.o_cpu_mem_rdata[31:0]
+testbench_TOP_SOC.uut.u_nat_pwm.reg0_aipDataOut[31:0]
+testbench_TOP_SOC.uut.u_nat_pwm.reg4_aipDataIn[31:0]
+testbench_TOP_SOC.uut.u_nat_pwm.reg8_aipConfig[31:0]
+@28
+testbench_TOP_SOC.uut.u_nat_pwm.start_w
+@200
+-MEM_READY
+@28
+testbench_TOP_SOC.uut.clk
+testbench_TOP_SOC.uut.u_nat_pwm.i_cpu_mem_valid
+testbench_TOP_SOC.uut.u_nat_pwm.i_cpu_mem_wen
+testbench_TOP_SOC.uut.u_nat_pwm.busCtrl_doWrite
+testbench_TOP_SOC.uut.u_nat_pwm.o_cpu_mem_ready
+testbench_TOP_SOC.uut.u_nat_pwm.i_aip_sel
+@22
+testbench_TOP_SOC.uut.u_nat_pwm.reg8_aipConfig[31:0]
+testbench_TOP_SOC.uut.u_nat_pwm.reg4_aipDataIn[31:0]
+@28
+testbench_TOP_SOC.uut.u_nat_pwm.o_aip_write
+@22
+testbench_TOP_SOC.uut.u_pwm.u_aip.rdDataConfigReg[63:0]
+[pattern_trace] 1
+[pattern_trace] 0

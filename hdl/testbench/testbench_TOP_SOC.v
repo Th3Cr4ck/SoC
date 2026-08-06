@@ -25,7 +25,7 @@ module testbench_TOP_SOC;
   event ser_sample;
 
   initial begin
-    $dumpfile("testbench.vcd");
+    $dumpfile("Testbench_soc.vcd");
     $dumpvars(0, testbench_TOP_SOC);
     /*       for (integer idx = 0; idx < 1024; idx++) begin
             $dumpvars(1, testbench_TOP_SOC.uut.soc.picorv32_AIP.memory.mem[idx]);
@@ -77,7 +77,7 @@ module testbench_TOP_SOC;
 
   initial begin
     if (!$value$plusargs("firmware=%s", firmware_file)) begin
-      firmware_file = "../picosoc/firmware/main_fw.txt";
+      firmware_file = "firmware/main_fw.txt";
       $display("Firmware charged!");
     end
     $readmemh(firmware_file, mem);

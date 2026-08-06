@@ -2,8 +2,8 @@
 `define EOF 32'hFFFF_FFFF
 `define NULL 0
 
-module Test_id00001001 #(
-    parameter id00001001_DATA_WIDTH_OUTPUT_P = 12,
+module tb_ID00005010 #(
+    // parameter id00001001_DATA_WIDTH_OUTPUT_P = 12,
     parameter CLK_PERIOD = 2
 );
 
@@ -18,10 +18,11 @@ module Test_id00001001 #(
   //------------------------------------------------------------           
   STATUS = 5'd30,  //Mandatory config
   IP_ID = 5'd31,  //Mandatory config
+  // id00005010_CConfReg = 5'd0,  // output data register
   id00001001_MDATAIN0 = 5'd0,  // output data register
   id00001001_ADATAIN0 = 5'd1, id00001001_MMEMOUT0 = 5'd2,  // input data register
   id00001001_AMEMOUT0 = 5'd3, id00001001_MMEMOUT1 = 5'd4,  // interruptions
-  id00001001_AMEMOUT1 = 5'd5, id00001001_CCONFREG = 5'd6, id00001001_ACONFREG = 5'd7,
+  id00001001_AMEMOUT1 = 5'd5, id00001001_CCONFREG = 5'd0, id00001001_ACONFREG = 5'd1,
   //------------------------------------------------------------
   //..................PARAMETERS DEFINED BY THE USER............
   //------------------------------------------------------------
@@ -51,10 +52,11 @@ module Test_id00001001 #(
   reg [DATAWIDTH-1:0] id00001001_result[id00001001_SIZE_MEM0-1:0];
   reg [(DATAWIDTH*id00001001_SIZE_MEM0)-1:0] id00001001_result_packed;
 
+  wire w_pwm;
 
   initial begin
-    $dumpfile("Test_id00001001.vcd");
-    $dumpvars(0, Test_id00001001);
+    $dumpfile("Test_id00005010.vcd");
+    $dumpvars(0, tb_ID00005010);
     $dumpall;
   end
 
@@ -83,29 +85,40 @@ module Test_id00001001 #(
 
     //(INTERRUPTIONS) 
     //FOR ENABLING INTERRUPTIONS
-    enableINT(INT_BIT_DONE);
+    // enableINT(INT_BIT_DONE);
 
-    $display("%7T writing to id00001001_MDATAIN0 Register", $time);
-    writeMem(id00001001_MDATAIN0, 32'h0000_beaf, 1, 0);  // 
+    // $display("%7T writing to id00001001_MDATAIN0 Register", $time);
+    // writeMem(id00001001_MDATAIN0, 32'h0000_beaf, 1, 0);  // 
 
     $display("%7T writing to CONFREG Register", $time);
-    writeConfReg(id00001001_CCONFREG, 32'h55555555, 1, 0);  // 
+    writeConfReg(id00001001_CCONFREG, 64'h0003_0002_000A_0002, 2, 0);  // 
+    // writeConfReg(id00001001_CCONFREG, 32'h55555555, 1, 0);  // 
 
+    $display("%7T sending START", $time);
+    start();
     #50
+
     // READ STATUS
-    getStatus(
-        id00001001_tb_data);
-    $display("%7T Read STATUS %h", $time, id00001001_tb_data);
+    // getStatus(
+    //     id00001001_tb_data);
+    // $display("%7T Read STATUS %h", $time, id00001001_tb_data);
 
     //CLEAR INT DONE FLAG
-    clearINT(INT_BIT_DONE);
+    // clearINT(INT_BIT_DONE);
 
     // READ STATUS
-    getStatus(id00001001_tb_data);
-    $display("%7T Read STATUS %h", $time, id00001001_tb_data);
-
+    // getStatus(id00001001_tb_data);
+    // $display("%7T Read STATUS %h", $time, id00001001_tb_data);
+    //
 
     #10000;
+
+    // Change config
+    $display("%7T writing to CONFREG Register", $time);
+    writeConfReg(id00001001_CCONFREG, 64'h0003_0006_0008_0004, 2, 0);  // 
+
+    #10000;
+
     $display($time, " << finishing Simulation >>");
     $finish;
   end
@@ -115,21 +128,20 @@ module Test_id00001001 #(
 
 
 
-
-  ID00001001_dummy AIP_DUMMY_Module (
-      .clk      (clk),        // Clock
-      .rst_a    (rst_a),      // reset low active
-      .en_s     (1'b1),
-      //-------------------------- To/From NIc --------------------------//
-      .conf_dbus(configAIP),  //Used for protocol to determine different actions types
-      .read     (readAIP),    //Used for protocol to read different information types
-      .write    (writeAIP),   //Used for protocol to write different information types
-      .start    (startAIP),   //Used to start the IP-core
-      .data_in  (dataInAIP),  //different data in information types
-      .int_req  (intAIP),     //Interruption request
-      .data_out (dataOutAIP)  //different data out information types
-
+  ID00005010_pwm u_pwmModule (
+      .i_clk       (clk),         // Clock
+      .i_rst       (rst_a),       // reset low active
+      .i_enAIP     (1'b1),
+      .i_dataInAIP (dataInAIP),
+      .i_configAIP (configAIP),
+      .i_writeAIP  (writeAIP),
+      .i_readAIP   (readAIP),
+      .i_startAIP  (startAIP),
+      .o_dataOutAIP(dataOutAIP),
+      .o_intAIP    (intAIP),
+      .o_pwm       (w_pwm)
   );
+
 
 
   //*******************************************************************

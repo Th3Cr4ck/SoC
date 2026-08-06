@@ -19,7 +19,8 @@ module ID00005010_pwm (
   localparam DATA_CONF_WIDTH = 16;
 
   wire [DATA_WIDTH*2-1:0] w_dataConfig;
-  wire w_start;
+  wire w_startAIP;
+  reg r_coreEn;
 
   // AIP
   ID00005010_aip u_aip (
@@ -40,7 +41,7 @@ module ID00005010_pwm (
       .rdDataConfigReg(w_dataConfig),
       .statusIPcore_Busy(1'b0),
       .intIPCore_Done(1'b0),
-      .startIPcore(w_start)
+      .startIPcore(w_startAIP)
   );
 
   // Core
@@ -49,7 +50,7 @@ module ID00005010_pwm (
   ) u_pwmCore (
       .clk(i_clk),
       .rst_n(i_rst),
-      .i_en(w_start),
+      .i_en(r_coreEn),
       .i_output_en(w_dataConfig[49]),
       .i_prescaler(w_dataConfig[15:0]),
       .i_period(w_dataConfig[31:16]),
@@ -59,5 +60,13 @@ module ID00005010_pwm (
   );
 
   assign w_dataConfig[DATA_WIDTH*2-1:50] = 0;
+
+  always @(posedge i_clk or negedge i_rst) 
+    if (~i_rst)
+      r_coreEn <= 1'b0;
+    else if (w_startAIP)
+      r_coreEn <= ~r_coreEn;
+    else
+      r_coreEn <= r_coreEn;
 
 endmodule

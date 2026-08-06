@@ -6,14 +6,16 @@ IVERILOG = iverilog$(ICARUS_SUFFIX)
 VVP = vvp$(ICARUS_SUFFIX)
 PYTHON = python3
 
-NAME := PICORV32_Module# := se usa para valores constantes
-BASICBLOCKS := ../mods/basicblocks
-MODULES= modules
+# ":=" se usa para valores constantes
+NAME := PICORV32_Module
 HDL := hdl
 AIP := hdl/AIP
 CORDIC := hdl/cordic
+TESTS := hdl/testbench
 FIRMWARE := firmware
 SIM := simulation
+
+HDL_FILES = $(shell find $(HDL) -path $(TESTS) -prune -o -type f \( -name "*.v" -o -name "*.sv" \) -print)
 
 TEST_OBJS = $(addsuffix .o,$(basename $(wildcard tests/*.S)))
 FIRMWARE_OBJS = $(FIRMWARE)/start.o $(FIRMWARE)/irq.o $(FIRMWARE)/print.o
@@ -22,44 +24,44 @@ GCC_WARNS += -Wredundant-decls -Wstrict-prototypes -Wmissing-prototypes -pedanti
 TOOLCHAIN_PREFIX = $(RISCV_GNU_TOOLCHAIN_INSTALL_PREFIX)/bin/riscv64-unknown-elf-
 COMPRESSED_ISA = C
 
-synth_pwm: $(HDL)/pwm.v $(HDL)/tb_ID00005010.v $(HDL)/ID00005010* $(HDL)/prescaler.v $(AIP)/*.v
+synth_pwm: $(HDL)/pwm.v $(TESTS)/tb_ID00005010.v $(HDL)/ID00005010* $(HDL)/prescaler.v $(AIP)/*.v
 	$(IVERILOG) $^ -o $(SIM)/pwm.vvp
 
 sim_pwm: synth_pwm
 	vvp $(SIM)/pwm.vvp
 	mv Test_id00005010.vcd $(SIM)/Test_id00005010.vcd
 
-synth_gpio: $(HDL)/gpio_port.v $(HDL)/tb_ID00005020.v $(HDL)/ID00005020* $(AIP)/*.v $(HDL)/simple_dual_port_ram_single_clk.v
+synth_gpio: $(HDL)/gpio_port.v $(TESTS)/tb_ID00005020.v $(HDL)/ID00005020* $(AIP)/*.v $(HDL)/simple_dual_port_ram_single_clk.v
 	$(IVERILOG) $^ -o $(SIM)/gpio.vvp
 
 sim_gpio: synth_gpio
 	vvp $(SIM)/gpio.vvp
 	mv Test_id00005020.vcd $(SIM)/Test_id00005020.vcd
 
-synth_cordic: $(CORDIC)/*.v $(CORDIC)/*.sv $(HDL)/ID00005030* $(HDL)/tb_ID00005030.v $(AIP)/*.v $(HDL)/simple_dual_port_ram_single_clk.v
+synth_cordic: $(CORDIC)/*.v $(CORDIC)/*.sv $(HDL)/ID00005030* $(TESTS)/tb_ID00005030.v $(AIP)/*.v $(HDL)/simple_dual_port_ram_single_clk.v
 	$(IVERILOG) -g2012 $^ -o $(SIM)/cordic.vvp
 
 sim_cordic: synth_cordic
 	vvp $(SIM)/cordic.vvp
 	mv Test_id00005030.vcd $(SIM)/Test_id00005030.vcd
 
-synth_soc: $(HDL)/*.v #testbench_TOP_SOC.v pico_mini_soc.v pico_mini.v simpleuart.v picorv32_Small.v picorv32.v
-
+synth_soc: $(HDL_FILES) $(TESTS)/testbench_TOP_SOC.v
 	#-- Compilar
-	$(IVERILOG) $^ -o $(SIM)/$(NAME)_tb.out
+	$(IVERILOG) -g2012 $^ -o $(SIM)/$(NAME)_tb.out
 
-sim_soc: *.out
+sim_soc: $(SIM)/$(NAME)_tb.out	
 	#-- Simular
 	vvp $(SIM)/$(NAME)_tb.out
+	mv Testbench_soc.vcd $(SIM)/Testbench_soc.vcd
 	
 fpga_sections.lds: sections.lds
 	$(TOOLCHAIN_PREFIX)cpp -P -DICEBREAKER -o $@ $^
 
-main_fw.elf: $(FIRMWARE)/fpga_sections.lds $(FIRMWARE)/print.c $(FIRMWARE)/irqb.c $(FIRMWARE)/start.S $(FIRMWARE)/main.s
-	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRMWARE)/main_fw.o $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRMWARE)/main.s -Os
-	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRMWARE)/main_fw.elf $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRMWARE)/main.s -Os
+main_fw.elf: $(FIRMWARE)/fpga_sections.lds $(FIRMWARE)/print.c $(FIRMWARE)/irqb.c $(FIRMWARE)/start.S $(FIRMWARE)/main.c
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRMWARE)/main_fw.o $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRMWARE)/main.c -Os
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRMWARE)/main_fw.elf $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRMWARE)/main.c -Os
 	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRMWARE)/irqb.c -o $(FIRMWARE)/irqb.s
-	#$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRMWARE)/main.c -o $(FIRMWARE)/main.s # DEscomentar si el archivo main no es .s
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRMWARE)/main.c -o $(FIRMWARE)/main.s # Descomentar si el archivo main no es .s
 
 main_fw.hex: main_fw.elf
 	$(TOOLCHAIN_PREFIX)objcopy -O verilog $(FIRMWARE)/main_fw.elf $(FIRMWARE)/main_fw.hex

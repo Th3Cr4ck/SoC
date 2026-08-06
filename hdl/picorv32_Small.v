@@ -90,12 +90,12 @@ module picorv32_Small (
     irq[7] = irq_7;
   end
 
-  wire mem_valid;
-  wire mem_instr;
-  wire mem_ready, mem_readyMEM;
+  wire mem_valid; // Solicitud de lectura o escritura, activa en 1
+  wire mem_instr; // Tipo de instruccion de memoria: 1 fetch instruction, 0 load/store data
+  wire mem_ready; // Indica transaccion finalizada, activa en 1
   wire [31:0] mem_addr;
-  wire [31:0] mem_wdata;
-  wire [ 3:0] mem_wstrb;
+  wire [31:0] mem_wdata; 
+  wire [ 3:0] mem_wstrb; // Byte enable de escritura. 0000 indica lectura
   wire [31:0] mem_rdata, mem_rdata_mem, mem_rdata_ipcore;
 
   reg rom_ready;
@@ -106,8 +106,7 @@ module picorv32_Small (
 
   wire sel_mem;
 
-  assign iomem_valid = mem_valid && (mem_addr[31:24] > 8'h80);
-
+  assign iomem_valid = mem_valid && (mem_addr[31:24] >= 8'h80);
   assign iomem_wstrb = mem_wstrb;
   assign iomem_addr  = mem_addr;
   assign iomem_wdata = mem_wdata;
@@ -130,9 +129,6 @@ module picorv32_Small (
   : simpleuart_reg_div_sel ? simpleuart_reg_div_do
   : simpleuart_reg_dat_sel ? simpleuart_reg_dat_do
   : 32'h 0000_0000;
-
-
-  wire [(4*32)-1:0] rdDataConfigReg;
 
   always @(posedge clk) begin
     ram_ready <= mem_valid && !mem_ready && (mem_addr >= LOWLIMIT_RAM && mem_addr < HIGHLIMIT_RAM);
@@ -182,7 +178,8 @@ module picorv32_Small (
       .WORDS(MEM_WORDS_RAM)
   ) memory (
       .clk(clk),
-      .wen((mem_valid && !mem_ready && (mem_addr >= LOWLIMIT_RAM && mem_addr < HIGHLIMIT_RAM)) ? mem_wstrb : 4'b0),
+      .wen((mem_valid && !mem_ready && (mem_addr >= LOWLIMIT_RAM && mem_addr < HIGHLIMIT_RAM)) 
+            ? mem_wstrb : 4'b0),
       .addr(mem_addr[31:2]),
       .wdata(mem_wdata),
       .rdata(ram_rdata)
@@ -192,14 +189,9 @@ module picorv32_Small (
       .WORDS(MEM_WORDS_ROM)
   ) memoryROM (
       .clk  (clk),
-      //.wen((mem_valid && mem_addr >= 4*MEM_WORDS && mem_addr < 32'h 0200_0000) ? mem_wstrb : 4'b0),
-      .addr (mem_addr[31:2]), // Direccionamiento alineado a 4 bytes, ignora los primeros dos bits
-      //.wdata(mem_wdata),
+      .addr (mem_addr[31:2]),  // Direccionamiento alineado a 4 bytes, ignora los primeros dos bits
       .rdata(rom_mem_rdata)
   );
-
-
-
 
   simpleuart simpleuart (
       .clk   (clk),
@@ -218,8 +210,7 @@ module picorv32_Small (
       .reg_dat_do  (simpleuart_reg_dat_do),
       .reg_dat_wait(simpleuart_reg_dat_wait)
   );
-
-
+ 
 endmodule
 
 
@@ -227,9 +218,7 @@ module picosoc_mem_rom #(
     parameter integer WORDS = 256
 ) (
     input clk,
-    //input [3:0] wen,
     input [($clog2(WORDS)-1):0] addr,
-    //input [31:0] wdata,
     output reg [31:0] rdata
 );
   reg [31:0] mem[0:WORDS-1];
@@ -283,7 +272,6 @@ module picosoc_mem #(
   end
 
   assign rdata = {mem3[addr_reg3], mem2[addr_reg2], mem1[addr_reg1], mem0[addr_reg0]};
-
 
   function integer CeilLog2;
     input integer data;
