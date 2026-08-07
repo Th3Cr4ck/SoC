@@ -9,12 +9,31 @@
 #define AIP_CONFIG   2
 #define AIP_START    3
 
-#define PWM_ACONFREG 1
 #define PWM_CCONFREG 0
-#define IDREG 31
+#define PWM_ACONFREG 1
+
+#define GPIO_MMEMOUT  0 
+#define GPIO_AMEMOUT  1
+#define GPIO_CCONFREG 2
+#define GPIO_ACONFREG 3
+
+#define STATUS 30
+#define IDREG  31
+
+void test_pwm(void);
+void test_gpio(void);
+void delay(uint32_t count);
 
 int main (int argc, char * argv[]) {
   
+  test_pwm();
+
+  test_gpio();
+
+  return 0;
+}
+
+void test_pwm(void) {
   PWM_BASE_ADDR[AIP_CONFIG] = IDREG;
   uint32_t id = PWM_BASE_ADDR[AIP_DATA_OUT];
 
@@ -26,8 +45,7 @@ int main (int argc, char * argv[]) {
   PWM_BASE_ADDR[AIP_DATA_IN] = 0x00030002;
 
   *(PWM_BASE_ADDR+AIP_START) = 1; // Start
-  for (int i = 0; i < 2000; i++)
-    __asm__("nop");
+  delay(200);
   *(PWM_BASE_ADDR+AIP_START) = 1; // Stop
 
 
@@ -39,9 +57,33 @@ int main (int argc, char * argv[]) {
   PWM_BASE_ADDR[AIP_DATA_IN] = 0x00030006;
 
   *(PWM_BASE_ADDR+AIP_START) = 1; // Start
-  for (int i = 0; i < 2000; i++)
-    __asm__("nop");
-  // *(PWM_BASE_ADDR+AIP_START) = 1; // Stop
+  delay(200);
+}
 
-  return 0;
+void test_gpio(void) {
+
+  GPIO_BASE_ADDR[AIP_CONFIG] = IDREG;
+  uint32_t id = GPIO_BASE_ADDR[AIP_DATA_OUT];
+
+  // GPIO como entrada / salida
+  GPIO_BASE_ADDR[AIP_CONFIG] = GPIO_ACONFREG;
+  GPIO_BASE_ADDR[AIP_DATA_IN] = 0;
+
+  GPIO_BASE_ADDR[AIP_CONFIG] = GPIO_CCONFREG;
+  GPIO_BASE_ADDR[AIP_DATA_IN] = 0x0000BEAF; // ODR
+  GPIO_BASE_ADDR[AIP_DATA_IN] = 0x0000FF00; // {8b input, 8b output(ODR)}
+
+  delay(200);
+
+  GPIO_BASE_ADDR[AIP_CONFIG] = GPIO_AMEMOUT;
+  GPIO_BASE_ADDR[AIP_DATA_IN] = 0;
+
+  GPIO_BASE_ADDR[AIP_CONFIG] = GPIO_MMEMOUT;
+  uint32_t memVal = GPIO_BASE_ADDR[AIP_DATA_OUT]; // {16b ODR 16b IDR}
+}
+
+
+void delay(uint32_t count) {
+  for (int i = 0; i < count; i++)
+    __asm__("nop");
 }

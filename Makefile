@@ -61,7 +61,7 @@ main_fw.elf: $(FIRMWARE)/fpga_sections.lds $(FIRMWARE)/print.c $(FIRMWARE)/irqb.
 	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRMWARE)/main_fw.o $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRMWARE)/main.c -Os
 	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRMWARE)/main_fw.elf $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRMWARE)/main.c -Os
 	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRMWARE)/irqb.c -o $(FIRMWARE)/irqb.s
-	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRMWARE)/main.c -o $(FIRMWARE)/main.s # Descomentar si el archivo main no es .s
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRMWARE)/main.c -o $(FIRMWARE)/main.s
 
 main_fw.hex: main_fw.elf
 	$(TOOLCHAIN_PREFIX)objcopy -O verilog $(FIRMWARE)/main_fw.elf $(FIRMWARE)/main_fw.hex

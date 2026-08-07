@@ -18,6 +18,22 @@ module testbench_TOP_SOC;
   reg         iStartIPcore;
   reg  [31:0] count_cycle = 0;
   reg         irq;
+  reg         pwm;
+
+  // Simula el dispositivo externo conectado al GPIO
+  reg [15:0] ext_data;
+  reg [15:0] ext_enable;
+
+  // Bus bidireccional
+  tri [15:0] io_port;
+
+  // El dispositivo externo solo conduce cuando ext_enable = 1
+  genvar k;
+  generate
+    for (k = 0; k < 16; k = k + 1) begin : g_port
+      assign io_port[k] = ext_enable[k] ? ext_data[k] : 1'bZ;
+    end
+  endgenerate
 
   always #(CYCLE / 2) clk = !clk;
 
@@ -100,8 +116,9 @@ module testbench_TOP_SOC;
       .ledg_n(ledg_n),
       .ser_rx(ser_rx),
       .ser_tx(ser_tx),
-      .irq_5 (1'b0)
-
+      .irq_5 (1'b0),
+      .o_pwm (pwm),
+      .io_gpio(io_port)
   );
 
   wire clk_12Mhz;
@@ -147,6 +164,9 @@ module testbench_TOP_SOC;
     rst        = 1'b0;  // reset is active
     uart_rx_in = 1'b0;
     #(CYCLE) rst = 1'b1;  // at time #n release reset
+
+    ext_enable = 16'h00FF;
+    ext_data = 16'h1234;
 
     #(1000 * CYCLE);
     $display($time, " << finishing Simulation >>");
