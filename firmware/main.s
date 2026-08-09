@@ -14,8 +14,12 @@ main:
 	addi	s0,sp,32
 	sw	a0,-20(s0)
 	sw	a1,-24(s0)
+	li	a5,1342185472
+	li	a4,104
+	sw	a4,0(a5)
 	call	test_pwm
 	call	test_gpio
+	call	test_cordic
 	li	a5,0
 	mv	a0,a5
 	lw	ra,28(sp)
@@ -151,12 +155,299 @@ test_gpio:
 	li	a5,-2147475456
 	lw	a5,0(a5)
 	sw	a5,-24(s0)
+	li	a0,200
+	call	delay
+	li	a5,-2147475456
+	addi	a5,a5,8
+	li	a4,3
+	sw	a4,0(a5)
+	li	a5,-2147475456
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,-2147475456
+	addi	a5,a5,8
+	li	a4,2
+	sw	a4,0(a5)
+	li	a5,-2147475456
+	addi	a5,a5,4
+	li	a4,256
+	sw	a4,0(a5)
+	li	a5,-2147475456
+	addi	a5,a5,4
+	li	a4,131072
+	addi	a4,a4,-256
+	sw	a4,0(a5)
+	li	a0,200
+	call	delay
 	nop
 	lw	ra,28(sp)
 	lw	s0,24(sp)
 	addi	sp,sp,32
 	jr	ra
 	.size	test_gpio, .-test_gpio
+	.align	2
+	.globl	test_cordic
+	.type	test_cordic, @function
+test_cordic:
+	addi	sp,sp,-48
+	sw	ra,44(sp)
+	sw	s0,40(sp)
+	addi	s0,sp,48
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,3
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,2
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	li	a4,1024
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	li	a4,65536
+	addi	a4,a4,804
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,30
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	lw	a5,0(a5)
+	sw	a5,-20(s0)
+	lw	a4,-20(s0)
+	li	a5,65536
+	or	a5,a4,a5
+	sw	a5,-20(s0)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	lw	a4,-20(s0)
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,12
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,30
+	sw	a4,0(a5)
+.L6:
+	li	a5,-2147471360
+	lw	a5,0(a5)
+	sw	a5,-24(s0)
+	lw	a5,-24(s0)
+	andi	a5,a5,1
+	beq	a5,zero,.L6
+	li	a5,65536
+	addi	a5,a5,1
+	sw	a5,-28(s0)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	lw	a4,-28(s0)
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	sw	zero,0(a5)
+	li	a5,-2147471360
+	lw	a5,0(a5)
+	sw	a5,-32(s0)
+	li	a5,-2147471360
+	lw	a5,0(a5)
+	sw	a5,-36(s0)
+	li	a5,-2147471360
+	lw	a5,0(a5)
+	sw	a5,-40(s0)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,3
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,2
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	li	a4,67108864
+	addi	a4,a4,1024
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,12
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,30
+	sw	a4,0(a5)
+.L7:
+	li	a5,-2147471360
+	lw	a5,0(a5)
+	sw	a5,-24(s0)
+	lw	a5,-24(s0)
+	andi	a5,a5,1
+	beq	a5,zero,.L7
+	li	a5,-2147471360
+	addi	a5,a5,4
+	lw	a4,-28(s0)
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	sw	zero,0(a5)
+	li	a5,-2147471360
+	lw	a5,0(a5)
+	sw	a5,-44(s0)
+	li	a1,8
+	lw	a0,-44(s0)
+	call	print_hex
+	li	a0,1000
+	call	delay
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	sw	zero,0(a5)
+	li	a5,-2147471360
+	lw	a5,0(a5)
+	sw	a5,-32(s0)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	lw	a5,0(a5)
+	sw	a5,-36(s0)
+	li	a5,-2147471360
+	addi	a5,a5,8
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	addi	a5,a5,4
+	li	a4,2
+	sw	a4,0(a5)
+	li	a5,-2147471360
+	lw	a5,0(a5)
+	sw	a5,-40(s0)
+	nop
+	lw	ra,44(sp)
+	lw	s0,40(sp)
+	addi	sp,sp,48
+	jr	ra
+	.size	test_cordic, .-test_cordic
+	.align	2
+	.globl	test_conv
+	.type	test_conv, @function
+test_conv:
+	addi	sp,sp,-32
+	sw	ra,28(sp)
+	sw	s0,24(sp)
+	addi	s0,sp,32
+	li	a5,-2147467264
+	addi	a5,a5,8
+	li	a4,7
+	sw	a4,0(a5)
+	li	a5,-2147467264
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,-2147467264
+	addi	a5,a5,8
+	li	a4,6
+	sw	a4,0(a5)
+	li	a5,-2147467264
+	addi	a5,a5,4
+	li	a4,325
+	sw	a4,0(a5)
+	li	a5,-2147467264
+	addi	a5,a5,8
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147467264
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,-2147467264
+	addi	a5,a5,8
+	sw	zero,0(a5)
+	sw	zero,-20(s0)
+	j	.L9
+.L10:
+	li	a5,-2147467264
+	addi	a5,a5,4
+	lw	a4,-20(s0)
+	sw	a4,0(a5)
+	lw	a5,-20(s0)
+	addi	a5,a5,1
+	sw	a5,-20(s0)
+.L9:
+	lw	a4,-20(s0)
+	li	a5,4
+	ble	a4,a5,.L10
+	li	a5,-2147467264
+	addi	a5,a5,8
+	li	a4,3
+	sw	a4,0(a5)
+	li	a5,-2147467264
+	addi	a5,a5,4
+	sw	zero,0(a5)
+	li	a5,-2147467264
+	addi	a5,a5,8
+	li	a4,2
+	sw	a4,0(a5)
+	sw	zero,-24(s0)
+	j	.L11
+.L12:
+	li	a5,-2147467264
+	addi	a5,a5,4
+	lw	a4,-24(s0)
+	sw	a4,0(a5)
+	lw	a5,-24(s0)
+	addi	a5,a5,1
+	sw	a5,-24(s0)
+.L11:
+	lw	a4,-24(s0)
+	li	a5,9
+	ble	a4,a5,.L12
+	li	a5,-2147467264
+	addi	a5,a5,12
+	li	a4,1
+	sw	a4,0(a5)
+	nop
+	lw	ra,28(sp)
+	lw	s0,24(sp)
+	addi	sp,sp,32
+	jr	ra
+	.size	test_conv, .-test_conv
 	.align	2
 	.globl	delay
 	.type	delay, @function
@@ -167,20 +458,21 @@ delay:
 	addi	s0,sp,48
 	sw	a0,-36(s0)
 	sw	zero,-20(s0)
-	j	.L6
-.L7:
+	j	.L14
+.L15:
  #APP
-# 88 "firmware/main.c" 1
+# 242 "firmware/main.c" 1
 	nop
 # 0 "" 2
  #NO_APP
 	lw	a5,-20(s0)
 	addi	a5,a5,1
 	sw	a5,-20(s0)
-.L6:
+.L14:
 	lw	a5,-20(s0)
-	lw	a4,-36(s0)
-	bgtu	a4,a5,.L7
+	mv	a4,a5
+	lw	a5,-36(s0)
+	bgtu	a5,a4,.L15
 	nop
 	nop
 	lw	ra,44(sp)

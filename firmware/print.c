@@ -11,7 +11,6 @@
 #define reg_uart_data (*(volatile uint32_t*)0x50002004)
 
 
-
 void putchar(char c)
 {
 	if (c == '\n')

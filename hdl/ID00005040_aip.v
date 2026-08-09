@@ -1,13 +1,14 @@
-// `define ID00005030_MEM_IN 0
-`define ID00005030_MEM_OUT 1
+`define ID00005040_MEM_IN 2
 
-`define ID00005030_CONF_REG 1
+`define ID00005040_MEM_OUT 1
+
+`define ID00005040_CONF_REG 1
 
 
-// `define ID00005030_STREAMING_IN
-// `define ID00005030_STREAMING_OUT
+// `define ID00005040_STREAMING_IN
+// `define ID00005040_STREAMING_OUT
 
-module ID00005030_aip
+module ID00005040_aip
 (
   clk,
   rst,
@@ -23,7 +24,11 @@ module ID00005030_aip
   intAIP,
 
   //--- IP-core ---//
-  
+  rdDataMemIn_0,
+rdDataMemIn_1,
+
+rdAddrMemIn_0,
+rdAddrMemIn_1,
 
 
   wrDataMemOut_0,
@@ -54,7 +59,7 @@ intIPCore_Done,
 
   localparam STATUS_WIDTH = 8;
 
-  localparam CONF_REG_SIZE = 2;
+  localparam CONF_REG_SIZE = 1;
 
   input clk;
   input rst;
@@ -70,7 +75,11 @@ intIPCore_Done,
   output intAIP;
 
   //--- IP-core ---//
-  
+  output wire [DATA_WIDTH-1:0] rdDataMemIn_0;
+input wire [MEM_ADDR_MAX_WIDTH-1:0] rdAddrMemIn_0;
+output wire [DATA_WIDTH-1:0] rdDataMemIn_1;
+input wire [MEM_ADDR_MAX_WIDTH-1:0] rdAddrMemIn_1;
+
   input [DATA_WIDTH-1:0] wrDataMemOut_0;
 input [MEM_ADDR_MAX_WIDTH-1:0] wrAddrMemOut_0;
 input wrEnMemOut_0;
@@ -84,7 +93,7 @@ input intIPCore_Done;
 
   output startIPcore;
 
-  ID00005030_aipModules AIP
+  ID00005040_aipModules AIP
   (
     .clk (clk),
     .rst (rst),
@@ -100,8 +109,10 @@ input intIPCore_Done;
     .intAIP (intAIP),
 
     //--- IP-core ---//
-    
-    
+    .rdDataMemIn({rdDataMemIn_1, rdDataMemIn_0}),
+
+    .rdAddrMemIn({rdAddrMemIn_1, rdAddrMemIn_0}),
+
     .wrDataMemOut({wrDataMemOut_0}),
 
     .wrAddrMemOut({wrAddrMemOut_0}),
@@ -121,7 +132,7 @@ input intIPCore_Done;
 
 endmodule
 
-module ID00005030_aipModules
+module ID00005040_aipModules
 (
   clk,
   rst,
@@ -137,34 +148,34 @@ module ID00005030_aipModules
   intAIP,
 
   //--- IP-core ---//
-  `ifdef ID00005030_MEM_IN
+  `ifdef ID00005040_MEM_IN
   rdDataMemIn,
   rdAddrMemIn,
-  `elsif ID00005030_STREAMING_IN
+  `elsif ID00005040_STREAMING_IN
   rdDataMemIn,
   rdAddrMemIn,
   `endif
 
-  `ifdef ID00005030_MEM_OUT
+  `ifdef ID00005040_MEM_OUT
   wrDataMemOut,
   wrAddrMemOut,
   wrEnMemOut,
-  `elsif ID00005030_STREAMING_OUT
+  `elsif ID00005040_STREAMING_OUT
   wrDataMemOut,
   wrEnMemOut,
   `endif
 
-  `ifdef ID00005030_CONF_REG
+  `ifdef ID00005040_CONF_REG
   rdDataConfigReg,
   `endif
 
-  `ifdef ID00005030_STREAMING_IN
+  `ifdef ID00005040_STREAMING_IN
   dataInStreaming,
   startStreaming,
   wrInStreaming,
   `endif
 
-  `ifdef ID00005030_STREAMING_OUT
+  `ifdef ID00005040_STREAMING_OUT
   dataOutStreaming,
   doneStreaming,
   wrOutStreaming,
@@ -176,7 +187,7 @@ module ID00005030_aipModules
   startIPcore
 );
 
-  localparam IP_ID = 32'h00005030;
+  localparam IP_ID = 32'h00005040;
 
   localparam SEL_BITS = 'd2;
 
@@ -190,25 +201,25 @@ module ID00005030_aipModules
 
   localparam STATUS_WIDTH = 8;
 
-  `ifdef ID00005030_MEM_IN
-  localparam [(`ID00005030_MEM_IN*MEM_ADDR_MAX_WIDTH)-1:0] MEM_IN_ADDR_WIDTH = {  };
+  `ifdef ID00005040_MEM_IN
+  localparam [(`ID00005040_MEM_IN*MEM_ADDR_MAX_WIDTH)-1:0] MEM_IN_ADDR_WIDTH = { 16'd5, 16'd5 };
 
-  localparam [((`ID00005030_MEM_IN*2)*CONFIG_WIDTH)-1:0] CONFIG_MEM_IN = {  };
+  localparam [((`ID00005040_MEM_IN*2)*CONFIG_WIDTH)-1:0] CONFIG_MEM_IN = { 5'b00011, 5'b00010, 5'b00001, 5'b00000 };
   `endif
 
-  `ifdef ID00005030_MEM_OUT
-  localparam [(`ID00005030_MEM_OUT*MEM_ADDR_MAX_WIDTH)-1:0] MEM_OUT_ADDR_WIDTH = { 16'd2 };
+  `ifdef ID00005040_MEM_OUT
+  localparam [(`ID00005040_MEM_OUT*MEM_ADDR_MAX_WIDTH)-1:0] MEM_OUT_ADDR_WIDTH = { 16'd6 };
 
-  localparam [((`ID00005030_MEM_OUT*2)*CONFIG_WIDTH)-1:0] CONFIG_MEM_OUT = { 5'b00001, 5'b00000 };
+  localparam [((`ID00005040_MEM_OUT*2)*CONFIG_WIDTH)-1:0] CONFIG_MEM_OUT = { 5'b00101, 5'b00100 };
   `endif
 
-  `ifdef ID00005030_CONF_REG
-  localparam [(`ID00005030_CONF_REG*CONF_REG_ADDR_MAX_WIDTH)-1:0] CONF_REG_ADDR_WIDTH = { 3'd2 };
+  `ifdef ID00005040_CONF_REG
+  localparam [(`ID00005040_CONF_REG*CONF_REG_ADDR_MAX_WIDTH)-1:0] CONF_REG_ADDR_WIDTH = { 3'd1 };
 
-  localparam [(2*CONFIG_WIDTH)-1:0] CONFIG_CONF_REG = { 5'b00011, 5'b00010 };
+  localparam [(2*CONFIG_WIDTH)-1:0] CONFIG_CONF_REG = { 5'b00111, 5'b00110 };
   `endif
 
-  `ifdef ID00005030_STREAMING_IN
+  `ifdef ID00005040_STREAMING_IN
   localparam [MEM_ADDR_MAX_WIDTH-1:0] MEM_IN_STREAMING_ADDR_WIDTH = {  };
   `endif
 
@@ -224,39 +235,39 @@ module ID00005030_aipModules
   output [DATA_WIDTH-1:0] dataOutAIP;
   output intAIP;
 
-  `ifdef ID00005030_MEM_IN
-  output [(`ID00005030_MEM_IN*DATA_WIDTH)-1:0] rdDataMemIn;
-  input wire [(`ID00005030_MEM_IN*MEM_ADDR_MAX_WIDTH)-1:0] rdAddrMemIn;
+  `ifdef ID00005040_MEM_IN
+  output [(`ID00005040_MEM_IN*DATA_WIDTH)-1:0] rdDataMemIn;
+  input wire [(`ID00005040_MEM_IN*MEM_ADDR_MAX_WIDTH)-1:0] rdAddrMemIn;
 
-  wire [(`ID00005030_MEM_IN*MEM_ADDR_MAX_WIDTH)-1:0] wrAddrMemIn;
-  wire [`ID00005030_MEM_IN-1:0] wrEnMemIn;
+  wire [(`ID00005040_MEM_IN*MEM_ADDR_MAX_WIDTH)-1:0] wrAddrMemIn;
+  wire [`ID00005040_MEM_IN-1:0] wrEnMemIn;
 
   wire [DATA_WIDTH-1:0] rdDataMemIn0;
-  `elsif ID00005030_STREAMING_IN
+  `elsif ID00005040_STREAMING_IN
   output [DATA_WIDTH-1:0] rdDataMemIn;
   input wire [MEM_ADDR_MAX_WIDTH-1:0] rdAddrMemIn;
-  `endif // ID00005030_MEM_IN
+  `endif // ID00005040_MEM_IN
 
-  `ifdef ID00005030_MEM_OUT
-  input [(`ID00005030_MEM_OUT*DATA_WIDTH)-1:0] wrDataMemOut;
-  input [(`ID00005030_MEM_OUT*MEM_ADDR_MAX_WIDTH)-1:0] wrAddrMemOut;
-  input [`ID00005030_MEM_OUT-1:0] wrEnMemOut;
+  `ifdef ID00005040_MEM_OUT
+  input [(`ID00005040_MEM_OUT*DATA_WIDTH)-1:0] wrDataMemOut;
+  input [(`ID00005040_MEM_OUT*MEM_ADDR_MAX_WIDTH)-1:0] wrAddrMemOut;
+  input [`ID00005040_MEM_OUT-1:0] wrEnMemOut;
 
-  wire [(`ID00005030_MEM_OUT*DATA_WIDTH)-1:0] rdDataMemOut;
-  wire [(`ID00005030_MEM_OUT*MEM_ADDR_MAX_WIDTH)-1:0] rdAddrMemOut;
-  `elsif ID00005030_STREAMING_OUT
+  wire [(`ID00005040_MEM_OUT*DATA_WIDTH)-1:0] rdDataMemOut;
+  wire [(`ID00005040_MEM_OUT*MEM_ADDR_MAX_WIDTH)-1:0] rdAddrMemOut;
+  `elsif ID00005040_STREAMING_OUT
   input [DATA_WIDTH-1:0] wrDataMemOut;
   input [0:0] wrEnMemOut;
-  `endif // ID00005030_MEM_OUT
+  `endif // ID00005040_MEM_OUT
 
-  `ifdef ID00005030_CONF_REG
+  `ifdef ID00005040_CONF_REG
   output [(CONF_REG_ADDR_WIDTH*DATA_WIDTH)-1:0] rdDataConfigReg;
 
   wire [CONF_REG_ADDR_MAX_WIDTH-1:0] wrAddrConfigReg;
   wire wrEnConfigReg;
-  `endif //ID00005030_CONF_REG
+  `endif //ID00005040_CONF_REG
 
-  `ifdef ID00005030_STREAMING_IN
+  `ifdef ID00005040_STREAMING_IN
   input [DATA_WIDTH-1:0] dataInStreaming;
   input startStreaming;
   input wrInStreaming;
@@ -266,7 +277,7 @@ module ID00005030_aipModules
   wire [DATA_WIDTH-1:0] rdDataMemInStreaming;
   `endif
 
-  `ifdef ID00005030_STREAMING_OUT
+  `ifdef ID00005040_STREAMING_OUT
   output [DATA_WIDTH-1:0] dataOutStreaming;
   output doneStreaming;
   output wrOutStreaming;
@@ -287,13 +298,13 @@ module ID00005030_aipModules
 
   wire [DATA_WIDTH-1:0] configsAIP;
 
-  `ifdef ID00005030_STREAMING_IN
+  `ifdef ID00005040_STREAMING_IN
       assign startIPcore = (configsAIP[1]&startAIP)|(configsAIP[2]&startStreaming);
   `else
       assign startIPcore = startAIP;
   `endif
 
-  `ifdef ID00005030_STREAMING_OUT
+  `ifdef ID00005040_STREAMING_OUT
       assign dataOutStreaming = wrDataMemOut[0+:DATA_WIDTH];
       assign doneStreaming = intIPCore[0];
       assign wrOutStreaming = wrEnMemOut[0];
@@ -302,9 +313,9 @@ module ID00005030_aipModules
   genvar i;
 
   //--- Mem In ---//
-  `ifdef ID00005030_MEM_IN
+  `ifdef ID00005040_MEM_IN
   generate
-      for(i=0; i<`ID00005030_MEM_IN; i = i + 1) begin :  MEMIN
+      for(i=0; i<`ID00005040_MEM_IN; i = i + 1) begin :  MEMIN
           if (0 == i)
               simple_dual_port_ram_single_clk
               #(
@@ -343,7 +354,7 @@ module ID00005030_aipModules
   endgenerate
   `endif
 
-  `ifdef ID00005030_STREAMING_IN
+  `ifdef ID00005040_STREAMING_IN
   simple_dual_port_ram_single_clk
   #(
       .DATA_WIDTH (DATA_WIDTH),
@@ -362,20 +373,20 @@ module ID00005030_aipModules
   );
   `endif
 
-  `ifdef ID00005030_MEM_IN
-      `ifdef ID00005030_STREAMING_IN
+  `ifdef ID00005040_MEM_IN
+      `ifdef ID00005040_STREAMING_IN
           assign rdDataMemIn[0+:DATA_WIDTH] = configsAIP[0] ? rdDataMemInStreaming : rdDataMemIn0;
       `else
           assign rdDataMemIn[0+:DATA_WIDTH] = rdDataMemIn0;
       `endif
-  `elsif ID00005030_STREAMING_IN
+  `elsif ID00005040_STREAMING_IN
       assign rdDataMemIn[0+:DATA_WIDTH] = rdDataMemInStreaming;
   `endif
 
   //--- Mem Out ---//
-  `ifdef ID00005030_MEM_OUT
+  `ifdef ID00005040_MEM_OUT
   generate
-      for(i=0; i<`ID00005030_MEM_OUT; i = i+1) begin : MEMOUT
+      for(i=0; i<`ID00005040_MEM_OUT; i = i+1) begin : MEMOUT
           simple_dual_port_ram_single_clk
           #(
               .DATA_WIDTH (DATA_WIDTH),
@@ -397,7 +408,7 @@ module ID00005030_aipModules
   `endif
 
   //--- Conf Reg ---//
-  `ifdef ID00005030_CONF_REG
+  `ifdef ID00005040_CONF_REG
   generate
       aipConfigurationRegister
       #(
@@ -419,15 +430,15 @@ module ID00005030_aipModules
   `endif
 
   //---------- Control ----------//
-  ID00005030_aipCtrl
+  ID00005040_aipCtrl
   #(
-      `ifdef ID00005030_MEM_IN
+      `ifdef ID00005040_MEM_IN
       .CONFIG_MEM_IN(CONFIG_MEM_IN),
       `endif
-      `ifdef ID00005030_MEM_OUT
+      `ifdef ID00005040_MEM_OUT
       .CONFIG_MEM_OUT(CONFIG_MEM_OUT),
       `endif
-      `ifdef ID00005030_CONF_REG
+      `ifdef ID00005040_CONF_REG
       .CONF_REG_ADDR_WIDTH(CONF_REG_ADDR_WIDTH),
       .CONFIG_CONF_REG(CONFIG_CONF_REG),
       `endif
@@ -442,21 +453,21 @@ module ID00005030_aipModules
       .writeAIP(writeAIP),
       .configAIP(configAIP),
 
-      `ifdef ID00005030_MEM_IN
+      `ifdef ID00005040_MEM_IN
       .wrEnMemIn(wrEnMemIn),
       .wrAddrMemIn(wrAddrMemIn),
       `endif
 
-      `ifdef ID00005030_MEM_OUT
+      `ifdef ID00005040_MEM_OUT
       .rdAddrMemOut(rdAddrMemOut),
       `endif
 
-      `ifdef ID00005030_CONF_REG
+      `ifdef ID00005040_CONF_REG
       .wrAddrConfigReg(wrAddrConfigReg),
       .wrEnConfigReg(wrEnConfigReg),
       `endif
 
-      `ifdef ID00005030_STREAMING_IN
+      `ifdef ID00005040_STREAMING_IN
       .startStreaming(startStreaming),
       .wrStreaming(wrInStreaming),
       .wrAddrStreamingIn(wrAddrStreamingIn),
@@ -474,8 +485,8 @@ module ID00005030_aipModules
               assign dataMux[DATA_WIDTH*j+:DATA_WIDTH] = wireStatus;
           else if (j == ((2**SEL_BITS)-1))
               assign dataMux[DATA_WIDTH*j+:DATA_WIDTH] = wireIpId;
-          `ifdef ID00005030_MEM_OUT
-          else if (j<`ID00005030_MEM_OUT)
+          `ifdef ID00005040_MEM_OUT
+          else if (j<`ID00005040_MEM_OUT)
               assign dataMux[DATA_WIDTH*j+:DATA_WIDTH] = rdDataMemOut[DATA_WIDTH*j+:DATA_WIDTH];
           `endif
           else
@@ -522,7 +533,7 @@ module ID00005030_aipModules
 
 endmodule
 
-module ID00005030_aipCtrl
+module ID00005040_aipCtrl
 (
   clk,
   rst,
@@ -531,21 +542,21 @@ module ID00005030_aipCtrl
   writeAIP,
   configAIP,
 
-  `ifdef ID00005030_MEM_IN
+  `ifdef ID00005040_MEM_IN
   wrEnMemIn,
   wrAddrMemIn,
   `endif
 
-  `ifdef ID00005030_MEM_OUT
+  `ifdef ID00005040_MEM_OUT
   rdAddrMemOut,
   `endif
 
-  `ifdef ID00005030_CONF_REG
+  `ifdef ID00005040_CONF_REG
   wrAddrConfigReg,
   wrEnConfigReg,
   `endif
 
-  `ifdef ID00005030_STREAMING_IN
+  `ifdef ID00005040_STREAMING_IN
   startStreaming,
   wrStreaming,
   wrAddrStreamingIn,
@@ -568,15 +579,15 @@ module ID00005030_aipCtrl
 
   parameter SIZE_MUX = 'd2;
 
-  `ifdef ID00005030_MEM_IN
-  parameter [((`ID00005030_MEM_IN*2)*CONFIG_WIDTH)-1:0] CONFIG_MEM_IN = {5'b00011, 5'b00010, 5'b00001, 5'b00000};
+  `ifdef ID00005040_MEM_IN
+  parameter [((`ID00005040_MEM_IN*2)*CONFIG_WIDTH)-1:0] CONFIG_MEM_IN = {5'b00011, 5'b00010, 5'b00001, 5'b00000};
   `endif
 
-  `ifdef ID00005030_MEM_OUT
-  parameter [((`ID00005030_MEM_OUT*2)*CONFIG_WIDTH)-1:0] CONFIG_MEM_OUT = {5'b00101, 5'b00100};
+  `ifdef ID00005040_MEM_OUT
+  parameter [((`ID00005040_MEM_OUT*2)*CONFIG_WIDTH)-1:0] CONFIG_MEM_OUT = {5'b00101, 5'b00100};
   `endif
 
-  `ifdef ID00005030_CONF_REG
+  `ifdef ID00005040_CONF_REG
   parameter [CONF_REG_ADDR_MAX_WIDTH-1:0] CONF_REG_ADDR_WIDTH = {3'd2};
 
   parameter [(2*CONFIG_WIDTH)-1:0] CONFIG_CONF_REG = {5'b01011, 5'b01010};
@@ -589,27 +600,27 @@ module ID00005030_aipCtrl
   input writeAIP;
   input [CONFIG_WIDTH-1:0] configAIP;
 
-  `ifdef ID00005030_MEM_IN
-  output wire [(`ID00005030_MEM_IN*MEM_ADDR_MAX_WIDTH)-1:0] wrAddrMemIn;
-  output wire [`ID00005030_MEM_IN-1:0] wrEnMemIn;
+  `ifdef ID00005040_MEM_IN
+  output wire [(`ID00005040_MEM_IN*MEM_ADDR_MAX_WIDTH)-1:0] wrAddrMemIn;
+  output wire [`ID00005040_MEM_IN-1:0] wrEnMemIn;
 
-  reg [MEM_ADDR_MAX_WIDTH-1:0] regWrAddrMemIn [0:`ID00005030_MEM_IN];
+  reg [MEM_ADDR_MAX_WIDTH-1:0] regWrAddrMemIn [0:`ID00005040_MEM_IN];
   `endif
 
-  `ifdef ID00005030_MEM_OUT
-  output wire [(`ID00005030_MEM_OUT*MEM_ADDR_MAX_WIDTH)-1:0] rdAddrMemOut;
+  `ifdef ID00005040_MEM_OUT
+  output wire [(`ID00005040_MEM_OUT*MEM_ADDR_MAX_WIDTH)-1:0] rdAddrMemOut;
 
-  reg [MEM_ADDR_MAX_WIDTH-1:0] regRdAddrMemOut [0:`ID00005030_MEM_OUT];
+  reg [MEM_ADDR_MAX_WIDTH-1:0] regRdAddrMemOut [0:`ID00005040_MEM_OUT];
   `endif
 
-  `ifdef ID00005030_CONF_REG
+  `ifdef ID00005040_CONF_REG
   output wire [CONF_REG_ADDR_MAX_WIDTH-1:0] wrAddrConfigReg;
   output wrEnConfigReg;
 
   reg [CONF_REG_ADDR_MAX_WIDTH-1:0] regWrAddrConfigReg;
   `endif
 
-  `ifdef ID00005030_STREAMING_IN
+  `ifdef ID00005040_STREAMING_IN
   input startStreaming;
   input wrStreaming;
 
@@ -629,15 +640,15 @@ module ID00005030_aipCtrl
   assign setStatus = writeAIP & (configAIP == STAT_REG);
 
   genvar indexEn;
-  `ifdef ID00005030_MEM_IN
+  `ifdef ID00005040_MEM_IN
   generate
-      for (indexEn=0; indexEn<`ID00005030_MEM_IN; indexEn= indexEn + 1) begin : WR_EN_MEMIN
+      for (indexEn=0; indexEn<`ID00005040_MEM_IN; indexEn= indexEn + 1) begin : WR_EN_MEMIN
           assign wrEnMemIn[indexEn] = writeAIP & (configAIP == CONFIG_MEM_IN[CONFIG_WIDTH*(indexEn*2)+:CONFIG_WIDTH]);
-      end // for ID00005030_MEM_IN
+      end // for ID00005040_MEM_IN
    endgenerate
   `endif
 
-  `ifdef ID00005030_CONF_REG
+  `ifdef ID00005040_CONF_REG
   generate
       assign wrEnConfigReg = writeAIP & (configAIP == CONFIG_CONF_REG[0+:CONFIG_WIDTH]);
    endgenerate
@@ -656,8 +667,8 @@ module ID00005030_aipCtrl
         assign wireSelMux[j] = configAIP == STAT_REG ? statusValue[SIZE_MUX-1:0] : idValue[SIZE_MUX-1:0];
       end // if (j==(2**SIZE_MUX)-2)
       else if (j==0) begin
-        `ifdef ID00005030_MEM_OUT
-        if (`ID00005030_MEM_OUT == 1) begin
+        `ifdef ID00005040_MEM_OUT
+        if (`ID00005040_MEM_OUT == 1) begin
           assign selMux = (configAIP == CONFIG_MEM_OUT[CONFIG_WIDTH*(j*2)+:CONFIG_WIDTH]) ? j[SIZE_MUX-1:0] : wireSelMux[(2**SIZE_MUX)-2];
         end
         else begin
@@ -667,13 +678,13 @@ module ID00005030_aipCtrl
         assign selMux = wireSelMux[(2**SIZE_MUX)-2];
         `endif
       end // if (j==0)
-      `ifdef ID00005030_MEM_OUT
-      else if (j == `ID00005030_MEM_OUT - 1) begin
+      `ifdef ID00005040_MEM_OUT
+      else if (j == `ID00005040_MEM_OUT - 1) begin
         assign wireSelMux[j] = configAIP == CONFIG_MEM_OUT[CONFIG_WIDTH*(j*2)+:CONFIG_WIDTH] ? j[SIZE_MUX-1:0] : wireSelMux[(2**SIZE_MUX)-2];
-      end // if (j == `ID00005030_MEM_OUT - 1)
-      else if (j<`ID00005030_MEM_OUT) begin
+      end // if (j == `ID00005040_MEM_OUT - 1)
+      else if (j<`ID00005040_MEM_OUT) begin
         assign wireSelMux[j] = configAIP == CONFIG_MEM_OUT[CONFIG_WIDTH*(j*2)+:CONFIG_WIDTH] ? j[SIZE_MUX-1:0] : wireSelMux[j+1];
-      end // if (j<`ID00005030_MEM_OUT)
+      end // if (j<`ID00005040_MEM_OUT)
       `endif
     end // for
     end // if(SEL_MUX > 1)
@@ -685,47 +696,47 @@ module ID00005030_aipCtrl
   integer i;
   always @(posedge clk or negedge rst) begin
     if (!rst) begin
-      `ifdef ID00005030_MEM_IN
-      for (i=0; i<`ID00005030_MEM_IN; i= i + 1) begin
+      `ifdef ID00005040_MEM_IN
+      for (i=0; i<`ID00005040_MEM_IN; i= i + 1) begin
         regWrAddrMemIn[i] <= 'd0;
       end
       `endif
 
-      `ifdef ID00005030_MEM_OUT
-      for (i=0; i<`ID00005030_MEM_OUT; i= i + 1) begin
+      `ifdef ID00005040_MEM_OUT
+      for (i=0; i<`ID00005040_MEM_OUT; i= i + 1) begin
         regRdAddrMemOut[i] <= 'd0;
       end
       `endif
 
-      `ifdef ID00005030_CONF_REG
+      `ifdef ID00005040_CONF_REG
       regWrAddrConfigReg <= 'd0;
       `endif
 
-      `ifdef ID00005030_STREAMING_IN
+      `ifdef ID00005040_STREAMING_IN
       regWrAddrStreamingIn <= 'd0;
       `endif
     end // if (!rst)
     else begin
       if (en) begin
-        `ifdef ID00005030_MEM_IN
-        for (i=0; i<`ID00005030_MEM_IN; i= i + 1) begin
+        `ifdef ID00005040_MEM_IN
+        for (i=0; i<`ID00005040_MEM_IN; i= i + 1) begin
           if (writeAIP && configAIP == CONFIG_MEM_IN[CONFIG_WIDTH*(i*2+1)+:CONFIG_WIDTH])
             regWrAddrMemIn[i] <= memAddr[MEM_ADDR_MAX_WIDTH-1:0];
           else if (writeAIP && (configAIP == CONFIG_MEM_IN[CONFIG_WIDTH*(i*2)+:CONFIG_WIDTH]))
             regWrAddrMemIn[i] <= regWrAddrMemIn[i] + 1'b1;
-        end // for ID00005030_MEM_IN
+        end // for ID00005040_MEM_IN
         `endif
 
-        `ifdef ID00005030_MEM_OUT
-        for (i=0; i<`ID00005030_MEM_OUT; i= i + 1) begin
+        `ifdef ID00005040_MEM_OUT
+        for (i=0; i<`ID00005040_MEM_OUT; i= i + 1) begin
           if (writeAIP && configAIP == CONFIG_MEM_OUT[CONFIG_WIDTH*(i*2+1)+:CONFIG_WIDTH])
             regRdAddrMemOut[i] <= memAddr[MEM_ADDR_MAX_WIDTH-1:0];
           else if (readAIP && (configAIP == CONFIG_MEM_OUT[CONFIG_WIDTH*(i*2)+:CONFIG_WIDTH]))
             regRdAddrMemOut[i] <= regRdAddrMemOut[i] + 1'b1;
-        end // for ID00005030_MEM_OUT
+        end // for ID00005040_MEM_OUT
         `endif
 
-        `ifdef ID00005030_CONF_REG
+        `ifdef ID00005040_CONF_REG
         if (writeAIP && configAIP == CONFIG_CONF_REG[CONFIG_WIDTH+:CONFIG_WIDTH])
           regWrAddrConfigReg <= memAddr[CONF_REG_ADDR_MAX_WIDTH-1:0];
         else if (writeAIP && (configAIP == CONFIG_CONF_REG[0+:CONFIG_WIDTH]))
@@ -735,7 +746,7 @@ module ID00005030_aipCtrl
             regWrAddrConfigReg <= 'd0;
         `endif
 
-        `ifdef ID00005030_STREAMING_IN
+        `ifdef ID00005040_STREAMING_IN
         if (startStreaming)
           regWrAddrStreamingIn <= 'd0;
         else if (wrStreaming)
@@ -746,29 +757,29 @@ module ID00005030_aipCtrl
   end // always
 
   genvar indexAddr;
-  `ifdef ID00005030_MEM_IN
+  `ifdef ID00005040_MEM_IN
   generate
-    for (indexAddr=0; indexAddr<(`ID00005030_MEM_IN); indexAddr=indexAddr+1) begin: MEM_IN_ADDR
+    for (indexAddr=0; indexAddr<(`ID00005040_MEM_IN); indexAddr=indexAddr+1) begin: MEM_IN_ADDR
       assign wrAddrMemIn[MEM_ADDR_MAX_WIDTH*indexAddr +: MEM_ADDR_MAX_WIDTH] = regWrAddrMemIn[indexAddr][MEM_ADDR_MAX_WIDTH-1:0];
     end
   endgenerate
   `endif
 
-  `ifdef ID00005030_MEM_OUT
+  `ifdef ID00005040_MEM_OUT
   generate
-    for (indexAddr=0; indexAddr<(`ID00005030_MEM_OUT); indexAddr=indexAddr+1) begin: MEM_OUT_ADDR
+    for (indexAddr=0; indexAddr<(`ID00005040_MEM_OUT); indexAddr=indexAddr+1) begin: MEM_OUT_ADDR
       assign rdAddrMemOut[MEM_ADDR_MAX_WIDTH*indexAddr +: MEM_ADDR_MAX_WIDTH] = regRdAddrMemOut[indexAddr][MEM_ADDR_MAX_WIDTH-1:0];
     end
   endgenerate
   `endif
 
-  `ifdef ID00005030_CONF_REG
+  `ifdef ID00005040_CONF_REG
   generate
     assign wrAddrConfigReg = regWrAddrConfigReg;
   endgenerate
   `endif
 
-  `ifdef ID00005030_STREAMING_IN
+  `ifdef ID00005040_STREAMING_IN
   generate
     assign wrAddrStreamingIn = regWrAddrStreamingIn;
   endgenerate

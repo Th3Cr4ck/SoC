@@ -28,6 +28,7 @@ module simple_dual_port_ram_single_clk
 );
 
     reg [(DATA_WIDTH-1):0] RAM_Structure [2**ADDR_WIDTH-1:0];
+    wire debug_RAM [(DATA_WIDTH-1)*(2**ADDR_WIDTH-1):0];
     
     always @(posedge Write_clock__i) begin
         if (Write_enable_i) begin

@@ -11,6 +11,7 @@ NAME := PICORV32_Module
 HDL := hdl
 AIP := hdl/AIP
 CORDIC := hdl/cordic
+CONV := hdl/conv
 TESTS := hdl/testbench
 FIRMWARE := firmware
 SIM := simulation

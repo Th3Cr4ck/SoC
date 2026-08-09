@@ -1,0 +1,65 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Sat Aug  8 05:47:54 2026
+[*]
+[dumpfile] "/home/isaac/Documents/Cinvestav/Digital/Proyecto final/simulation/Testbench_soc.vcd"
+[dumpfile_mtime] "Sat Aug  8 05:44:27 2026"
+[dumpfile_size] 24369490
+[savefile] "/home/isaac/Documents/Cinvestav/Digital/Proyecto final/simulation/cordic_signals.gtkw"
+[timestart] 743417000
+[size] 1920 1033
+[pos] -1 -1
+*-18.000002 741452000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench_TOP_SOC.
+[treeopen] testbench_TOP_SOC.uut.
+[treeopen] testbench_TOP_SOC.uut.soc.
+[treeopen] testbench_TOP_SOC.uut.soc.picorv32_Small.
+[treeopen] testbench_TOP_SOC.uut.u_cordic.u_aip.AIP.CNTRL.
+[treeopen] testbench_TOP_SOC.uut.u_cordic.u_aip.AIP.STATUS.
+[sst_width] 276
+[signals_width] 474
+[sst_expanded] 1
+[sst_vpaned_height] 384
+@200
+-CORDIC
+@28
+testbench_TOP_SOC.uut.u_cordic.u_cordic.clk
+testbench_TOP_SOC.uut.u_cordic.u_cordic.start
+testbench_TOP_SOC.uut.u_cordic.u_cordic.done
+testbench_TOP_SOC.uut.u_cordic.u_cordic.busy
+@200
+-AIP
+@28
+testbench_TOP_SOC.uut.u_cordic.u_aip.startAIP
+testbench_TOP_SOC.uut.u_cordic.u_aip.intIPCore_Done
+testbench_TOP_SOC.uut.u_cordic.u_aip.statusIPcore_Busy
+@200
+-INNER AIP
+@22
+testbench_TOP_SOC.uut.u_cordic.u_aip.AIP.wireStatus[31:0]
+@200
+-AIP DATA
+@22
+testbench_TOP_SOC.uut.u_cordic.u_aip.AIP.configAIP[4:0]
+testbench_TOP_SOC.uut.u_cordic.u_aip.AIP.dataInAIP[31:0]
+testbench_TOP_SOC.uut.u_cordic.u_aip.AIP.dataOutAIP[31:0]
+@28
+testbench_TOP_SOC.uut.u_cordic.u_aip.AIP.writeAIP
+testbench_TOP_SOC.uut.u_cordic.u_aip.AIP.readAIP
+@200
+-NATIVE
+@22
+testbench_TOP_SOC.uut.u_nat_cordic.i_aip_dataOut[31:0]
+testbench_TOP_SOC.uut.u_nat_cordic.i_cpu_mem_addr[31:0]
+testbench_TOP_SOC.uut.u_nat_cordic.o_cpu_mem_rdata[31:0]
+testbench_TOP_SOC.uut.u_nat_cordic.reg0_aipDataOut[31:0]
+@28
+testbench_TOP_SOC.uut.u_nat_cordic.i_aip_sel
+testbench_TOP_SOC.uut.u_nat_cordic.i_cpu_mem_valid
+@22
+testbench_TOP_SOC.uut.u_nat_cordic.i_cpu_mem_wdata[31:0]
+@28
+testbench_TOP_SOC.uut.u_nat_cordic.i_cpu_mem_wen
+testbench_TOP_SOC.uut.u_nat_cordic.o_aip_write
+[pattern_trace] 1
+[pattern_trace] 0

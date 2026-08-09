@@ -48,8 +48,8 @@ module testbench_TOP_SOC;
         end
 */
     repeat (10) begin
-      repeat (5000) @(posedge clk);
-      $display("+50000 cycles");
+      repeat (10000) @(posedge clk);
+      $display("+100000 cycles");
     end
     $dumpall;
     $finish;
@@ -168,8 +168,8 @@ module testbench_TOP_SOC;
     ext_enable = 16'h00FF;
     ext_data = 16'h1234;
 
-    #(1000 * CYCLE);
-    $display($time, " << finishing Simulation >>");
+    // #(900000 * CYCLE);
+    // $display($time, " << finishing Simulation >>");
   end
 
 

@@ -1,0 +1,78 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Sat Aug  8 22:31:36 2026
+[*]
+[dumpfile] "/home/isaac/Documents/Cinvestav/Digital/Proyecto final/simulation/Testbench_soc.vcd"
+[dumpfile_mtime] "Sat Aug  8 06:04:14 2026"
+[dumpfile_size] 23417731
+[savefile] "/home/isaac/Documents/Cinvestav/Digital/Proyecto final/simulation/soc.gtkw"
+[timestart] 658616000
+[size] 1920 1033
+[pos] -1 -1
+*-18.445070 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench_TOP_SOC.
+[treeopen] testbench_TOP_SOC.uut.
+[treeopen] testbench_TOP_SOC.uut.u_cordic.
+[treeopen] testbench_TOP_SOC.uut.u_cordic.u_aip.
+[treeopen] testbench_TOP_SOC.uut.u_gpio.
+[sst_width] 276
+[signals_width] 540
+[sst_expanded] 1
+[sst_vpaned_height] 292
+@28
+testbench_TOP_SOC.uut.o_pwm
+@22
+testbench_TOP_SOC.uut.io_gpio[15:0]
+@28
+testbench_TOP_SOC.uut.soc.clk
+@22
+testbench_TOP_SOC.uut.soc.iomem_addr[31:0]
+testbench_TOP_SOC.uut.soc.iomem_rdata[31:0]
+@28
+testbench_TOP_SOC.uut.soc.iomem_ready
+testbench_TOP_SOC.uut.soc.iomem_valid
+@22
+testbench_TOP_SOC.uut.soc.iomem_wdata[31:0]
+testbench_TOP_SOC.uut.soc.iomem_wstrb[3:0]
+@200
+-GPIO
+@22
+testbench_TOP_SOC.uut.u_gpio.u_gpio_port.i_mode[15:0]
+testbench_TOP_SOC.uut.u_gpio.u_gpio_port.i_port_out[15:0]
+testbench_TOP_SOC.uut.u_gpio.u_gpio_port.io_port[15:0]
+testbench_TOP_SOC.uut.u_gpio.u_gpio_port.o_port_in[15:0]
+testbench_TOP_SOC.uut.u_gpio.w_dataConfig[63:0]
+@200
+-CORDIC
+@28
+testbench_TOP_SOC.uut.u_cordic.u_cordic.done
+testbench_TOP_SOC.uut.u_cordic.u_cordic.busy
+@22
+testbench_TOP_SOC.uut.u_cordic.u_cordic.x_i[12:0]
+testbench_TOP_SOC.uut.u_cordic.u_cordic.y_i[12:0]
+testbench_TOP_SOC.uut.u_cordic.u_cordic.z_i[12:0]
+testbench_TOP_SOC.uut.u_cordic.u_cordic.x_o[12:0]
+testbench_TOP_SOC.uut.u_cordic.u_cordic.y_o[12:0]
+@c00022
+testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+@28
+(0)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(1)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(2)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(3)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(4)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(5)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(6)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(7)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(8)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(9)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(10)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(11)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+(12)testbench_TOP_SOC.uut.u_cordic.u_cordic.z_o[12:0]
+@1401200
+-group_end
+@22
+testbench_TOP_SOC.uut.u_cordic.u_aip.AIP.wireStatus[31:0]
+testbench_TOP_SOC.uut.u_cordic.u_aip.rdDataConfigReg[63:0]
+[pattern_trace] 1
+[pattern_trace] 0

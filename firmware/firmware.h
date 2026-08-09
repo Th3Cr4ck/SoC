@@ -23,6 +23,6 @@ void print_hex(uint32_t v, int digits);
 void print_dec(uint32_t v);
 
 // main.c
-void main(void);
+// void main(void);
 
 #endif

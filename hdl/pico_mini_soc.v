@@ -37,18 +37,20 @@ module pico_mini_soc (
     output ledg_n,
 
     output o_pwm,
-    inout  [15:0] io_gpio
+    inout [15:0] io_gpio
 
 );
 
-  localparam NUM_PERI = 3;
+  localparam NUM_PERI = 4;
   localparam PWM_PERI = 0;
   localparam GPIO_PERI = 1;
   localparam CORDIC_PERI = 2;
+  localparam CONV_PERI = 3;
 
   localparam PWM_BASE_ADDR = 32'h8000_1000;
   localparam GPIO_BASE_ADDR = 32'h8000_2000;
   localparam CORDIC_BASE_ADDR = 32'h8000_3000;
+  localparam CONV_BASE_ADDR = 32'h8000_4000;
 
   wire clk_12Mhz;
   reg [1:0] cont;
@@ -105,52 +107,48 @@ module pico_mini_soc (
   wire [31:0] iomem_rdata;
   wire        iomem_wen;
   wire        irq_6;
+  wire        irq_7;
 
   // AIP connections
-  wire        aip_sel    [NUM_PERI];  //CPU Addr + valid condition
-  wire        aip_enable [NUM_PERI];  //enAIP
-  wire [31:0] aip_dataOut[NUM_PERI];  //dataOutAIP
-  wire [31:0] aip_dataIn [NUM_PERI];  //dataInAIP
-  wire [ 4:0] aip_config [NUM_PERI];  //configAIP
-  reg         aip_read   [NUM_PERI];  //readAIP
-  reg         aip_write  [NUM_PERI];  //writeAIP
-  wire        aip_start  [NUM_PERI];  //startAIP
-  wire        aip_int    [NUM_PERI];  //intAIP--------INT
-  wire        core_int   [NUM_PERI];  //intAIP----------INT TO CPU
+  wire        aip_sel     [NUM_PERI];  //CPU Addr + valid condition
+  wire        aip_enable  [NUM_PERI];  //enAIP
+  wire [31:0] aip_dataOut [NUM_PERI];  //dataOutAIP
+  wire [31:0] aip_dataIn  [NUM_PERI];  //dataInAIP
+  wire [ 4:0] aip_config  [NUM_PERI];  //configAIP
+  reg         aip_read    [NUM_PERI];  //readAIP
+  reg         aip_write   [NUM_PERI];  //writeAIP
+  wire        aip_start   [NUM_PERI];  //startAIP
+  wire        aip_int     [NUM_PERI];  //intAIP--------INT
+  wire        core_int    [NUM_PERI];  //intAIP----------INT TO CPU
 
   always @(posedge clk or negedge rst)
-    if (~rst)
-      iomem_ready <= 1'b0;
-    else if (iomem_valid && ~iomem_ready)
-      iomem_ready <= 1'b1;
-    else 
-      iomem_ready <= 1'b0;
+    if (~rst) iomem_ready <= 1'b0;
+    else if (iomem_valid && ~iomem_ready) iomem_ready <= 1'b1;
+    else iomem_ready <= 1'b0;
 
   // Auxiliar wires
-  wire        cpu_ready   [NUM_PERI];
-  wire [31:0] cpu_rdata   [NUM_PERI];
-
-  // assign iomem_ready = 
-  //   cpu_ready[PWM_PERI] |
-  //   cpu_ready[GPIO_PERI] |
-  //   cpu_ready[CORDIC_PERI];
+  wire        cpu_ready[NUM_PERI];
+  wire [31:0] cpu_rdata[NUM_PERI];
 
   assign iomem_rdata = 
     aip_sel[PWM_PERI] ? cpu_rdata[PWM_PERI] : 
     aip_sel[GPIO_PERI] ? cpu_rdata[GPIO_PERI] : 
     aip_sel[CORDIC_PERI] ? cpu_rdata[CORDIC_PERI]: 
+    aip_sel[CONV_PERI] ? cpu_rdata[CONV_PERI]: 
     32'd0;
 
   assign iomem_wen = iomem_wstrb > 4'b0;
 
   // Periph selector based on address
-  assign aip_sel[PWM_PERI] = iomem_valid && ~iomem_ready && (iomem_addr[31:12] == 20'h8000_1);
-  assign aip_sel[GPIO_PERI] = iomem_valid && ~iomem_ready && (iomem_addr[31:12] == 20'h8000_2);
-  assign aip_sel[CORDIC_PERI] = iomem_valid && ~iomem_ready && (iomem_addr[31:12] == 20'h8000_3);
+  assign aip_sel[PWM_PERI] = iomem_valid && (iomem_addr[31:12] == 20'h8000_1);
+  assign aip_sel[GPIO_PERI] = iomem_valid && (iomem_addr[31:12] == 20'h8000_2);
+  assign aip_sel[CORDIC_PERI] = iomem_valid && (iomem_addr[31:12] == 20'h8000_3);
+  assign aip_sel[CONV_PERI] = iomem_valid && (iomem_addr[31:12] == 20'h8000_4);
 
   assign aip_enable[PWM_PERI] = 1'b1;
   assign aip_enable[GPIO_PERI] = 1'b1;
   assign aip_enable[CORDIC_PERI] = 1'b1;
+  assign aip_enable[CONV_PERI] = 1'b1;
 
   pico_mini soc (
       .clk   (clk_12Mhz),
@@ -161,7 +159,7 @@ module pico_mini_soc (
 
       .irq_5(irq_5),
       .irq_6(irq_6),
-      .irq_7(1'b0),
+      .irq_7(irq_7),
 
       .iomem_valid(iomem_valid),
       .iomem_ready(iomem_ready),
@@ -271,7 +269,7 @@ module pico_mini_soc (
       .i_cpu_mem_wen(iomem_wen),
       .o_cpu_mem_rdata(cpu_rdata[CORDIC_PERI]),
       .o_cpu_mem_ready(),
-      .o_cpu_irq(irq_6),
+      .o_cpu_irq(),
       // AIP
       .i_aip_sel(aip_sel[CORDIC_PERI]),
       .i_aip_enable(aip_enable[CORDIC_PERI]),
@@ -301,4 +299,43 @@ module pico_mini_soc (
       .o_intAIP(aip_int[CORDIC_PERI])
   );
 
+  /*******************************************/
+  /****************** CONV *******************/
+  /*******************************************/
+  native_aip u_nat_conv (
+      .i_clk(clk_12Mhz),
+      .i_rst(resetn),
+      // CPU
+      .i_cpu_mem_valid(iomem_valid),
+      .i_cpu_mem_addr(iomem_addr),
+      .i_cpu_mem_wdata(iomem_wdata),
+      .i_cpu_mem_wen(iomem_wen),
+      .o_cpu_mem_rdata(cpu_rdata[CONV_PERI]),
+      .o_cpu_mem_ready(),
+      .o_cpu_irq(irq_7),
+      // AIP
+      .i_aip_sel(aip_sel[CONV_PERI]),
+      .i_aip_enable(aip_enable[CONV_PERI]),
+      .i_aip_dataOut(aip_dataOut[CONV_PERI]),
+      .o_aip_dataIn(aip_dataIn[CONV_PERI]),
+      .o_aip_config(aip_config[CONV_PERI]),
+      .o_aip_read(aip_read[CONV_PERI]),
+      .o_aip_write(aip_write[CONV_PERI]),
+      .o_aip_start(aip_start[CONV_PERI]),
+      .i_aip_int(aip_int[CONV_PERI]),
+      .o_core_int(core_int[CONV_PERI])
+  );
+
+  ID00005040_conv u_conv (
+      .clk(clk),
+      .rst_a(resetn),
+      .en_s(aip_enable[CORDIC_PERI]),
+      .data_in(aip_dataIn[CORDIC_PERI]),
+      .conf_dbus(aip_config[CORDIC_PERI]),
+      .write(aip_write[CORDIC_PERI]),
+      .read(aip_read[CORDIC_PERI]),
+      .start(aip_start[CORDIC_PERI]),
+      .data_out(aip_dataOut[CORDIC_PERI]),
+      .int_req(aip_int[CORDIC_PERI])
+  );
 endmodule

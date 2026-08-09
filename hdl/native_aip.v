@@ -35,6 +35,7 @@ module native_aip (
   wire        busCtrl_askRead;
   wire        busCtrl_doWrite;
   wire        busCtrl_doRead;
+  reg r_transaction_done;
 
   assign o_aip_dataIn = reg4_aipDataIn;   //dataInAIP
   assign o_aip_config = reg8_aipConfig;   //configAIP
@@ -64,7 +65,7 @@ module native_aip (
 
   assign busCtrl_askWrite = ((i_aip_sel && i_aip_enable) && (i_cpu_mem_wen));
   assign busCtrl_askRead = ((i_aip_sel && i_aip_enable) && (!((i_cpu_mem_wen))));
-  assign busCtrl_doWrite = (((i_aip_sel && i_aip_enable)) && (i_cpu_mem_wen));
+  assign busCtrl_doWrite = (((i_aip_sel && i_aip_enable)) && i_cpu_mem_wen && !r_transaction_done);
   assign busCtrl_doRead = (((i_aip_sel && i_aip_enable && i_cpu_mem_valid && o_cpu_mem_ready) ) && (! ((i_cpu_mem_wen))) && (!o_aip_write));
 
   // Write
@@ -74,8 +75,20 @@ module native_aip (
       reg8_aipConfig <= 32'h0;
       reg12_start <= 32'h0;
       o_cpu_mem_ready <= 1'b0;
+      r_transaction_done <= 1'b0;
     end else begin
-      o_cpu_mem_ready <= i_aip_sel;
+
+      if (!i_cpu_mem_valid) begin
+        o_cpu_mem_ready <= 1'b0;
+        r_transaction_done <= 1'b0;
+      end
+      else if (i_aip_sel && !r_transaction_done) begin
+        r_transaction_done <= 1'b1;
+        o_cpu_mem_ready <= 1'b1;
+      end
+      else begin
+        o_cpu_mem_ready <= 1'b0;
+      end
 
       case (i_cpu_mem_addr[7:0])
         8'h0c: begin
