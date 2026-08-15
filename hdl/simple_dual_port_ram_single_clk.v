@@ -9,6 +9,7 @@
  * - Single clock
  * Revision: 
  * Revision 0.01 - File Created
+ * Revision 0.02 - INIT Memory File
  * Additional Comments: 
  *
  */
@@ -16,8 +17,9 @@
 module simple_dual_port_ram_single_clk
 #(
     parameter DATA_WIDTH    =   12,     // Datawidth of data
-    parameter ADDR_WIDTH    =   6       // Address bits
-)   
+    parameter ADDR_WIDTH    =   6,      // Address bits
+    parameter TXT_FILE      =   " "     // Init Data
+)
 (
     input                           Write_clock__i, 
     input                           Write_enable_i,
@@ -28,8 +30,12 @@ module simple_dual_port_ram_single_clk
 );
 
     reg [(DATA_WIDTH-1):0] RAM_Structure [2**ADDR_WIDTH-1:0];
-    wire debug_RAM [(DATA_WIDTH-1)*(2**ADDR_WIDTH-1):0];
     
+    initial begin
+      if (TXT_FILE != " ")
+        $readmemh(TXT_FILE, RAM_Structure);
+    end
+
     always @(posedge Write_clock__i) begin
         if (Write_enable_i) begin
             RAM_Structure[Write_addres_i] = data_input___i;

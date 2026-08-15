@@ -11,9 +11,9 @@ NAME := PICORV32_Module
 HDL := hdl
 AIP := hdl/AIP
 CORDIC := hdl/cordic
-CONV := hdl/conv
 TESTS := hdl/testbench
 FIRMWARE := firmware
+FIRM_QUARTUS := Quartus/firmware
 SIM := simulation
 
 HDL_FILES = $(shell find $(HDL) -path $(TESTS) -prune -o -type f \( -name "*.v" -o -name "*.sv" \) -print)
@@ -73,11 +73,33 @@ main_fw.bin: $(FIRMWARE)/main_fw.elf
 memtarce: diss
 	$(PYTHON) $(FIRMWARE)/dump_objcopy2.py
 
+diss:
+	$(TOOLCHAIN_PREFIX)objdump -d $(FIRMWARE)/main_fw.o > $(FIRMWARE)/diss.txt
+
 main_fw.txt: main_fw.hex diss memtarce
 	$(PYTHON) $(FIRMWARE)/hextoMEM_v3.py $(FIRMWARE)/main_fw.hex $(FIRMWARE)/main_fw.txt 8192 
 
-diss:
-	$(TOOLCHAIN_PREFIX)objdump -d $(FIRMWARE)/main_fw.o > $(FIRMWARE)/diss.txt
+main_fw.elf.fpga: $(FIRMWARE)/fpga_sections.lds $(FIRMWARE)/print.c $(FIRMWARE)/irqb.c $(FIRMWARE)/start.S $(FIRM_QUARTUS)/main_quartus.c
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -I$(FIRMWARE) -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRM_QUARTUS)/main_fw.o $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRM_QUARTUS)/gpio_uart.c $(FIRM_QUARTUS)/main_quartus.c -Os
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -I$(FIRMWARE) -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRM_QUARTUS)/main_fw.elf $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRM_QUARTUS)/gpio_uart.c $(FIRM_QUARTUS)/main_quartus.c -Os
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRMWARE)/irqb.c -o $(FIRMWARE)/irqb.s
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -I$(FIRMWARE) -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRM_QUARTUS)/main_quartus.c -o $(FIRM_QUARTUS)/main.s
+
+main_fw.hex.fpga: main_fw.elf.fpga
+	$(TOOLCHAIN_PREFIX)objcopy -O verilog $(FIRM_QUARTUS)/main_fw.elf $(FIRM_QUARTUS)/main_fw.hex
+
+main_fw.bin.fpga: $(FIRM_QUARTUS)/main_fw.elf
+	$(TOOLCHAIN_PREFIX)objcopy -O binary $(FIRM_QUARTUS)/main_fw.elf $(FIRM_QUARTUS)/main_fw.bin
+
+diss.fpga:
+	$(TOOLCHAIN_PREFIX)objdump -d $(FIRM_QUARTUS)/main_fw.o > $(FIRMWARE)/diss.txt
+
+memtarce.fpga: diss.fpga
+	$(PYTHON) $(FIRM_QUARTUS)/dump_objcopy2.py
+	mv $(FIRMWARE)/diss.txt $(FIRM_QUARTUS)/diss.txt
+
+main_fw_fpga: main_fw.hex.fpga diss.fpga memtarce.fpga
+	$(PYTHON) $(FIRM_QUARTUS)/hextoMEM_v3.py $(FIRM_QUARTUS)/main_fw.hex $(FIRM_QUARTUS)/main_fw.txt 8192 
 
 clean:
 
@@ -87,6 +109,7 @@ clean:
                 $(FIRMWARE)/*.elf $(FIRMWARE)/*.bin $(FIRMWARE)/*.hex $(FIRMWARE)/*.txt $(FIRMWARE)/*.map \
                 testbench.vvp \
                 *.vvp *.vvp testbench.vcd *.trace 
+	rm -f $(FIRM_QUARTUS)/*.hex $(FIRM_QUARTUS)/*.elf $(FIRM_QUARTUS)/*.bin $(FIRM_QUARTUS)/*.txt $(FIRM_QUARTUS)/*.o
 	find $(SIM) -maxdepth 1 -type f ! -name "*.gtkw" -delete
 
 

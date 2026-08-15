@@ -1,4 +1,4 @@
-	.file	"main.c"
+	.file	"main_quartus.c"
 	.option nopic
 	.attribute arch, "rv32i2p1"
 	.attribute unaligned_access, 0
@@ -20,14 +20,14 @@ main:
 	sw	a0,-20(s0)
 	sw	a1,-24(s0)
 	li	a5,1342185472
-	li	a4,104
+	li	a4,434
 	sw	a4,0(a5)
 	lui	a5,%hi(.LC0)
 	addi	a0,a5,%lo(.LC0)
 	call	print
 	call	test_pwm
-	call	test_gpio
 	call	test_cordic
+	call	test_gpio
 	li	a5,0
 	mv	a0,a5
 	lw	ra,28(sp)
@@ -49,45 +49,16 @@ test_pwm:
 	sw	a4,0(a5)
 	li	a5,-2147479552
 	lw	a5,0(a5)
-	sw	a5,-20(s0)
-	li	a5,2
-	sh	a5,-22(s0)
-	li	a5,100
-	sh	a5,-24(s0)
-	li	a5,30
-	sh	a5,-26(s0)
-	li	a5,-2147479552
-	addi	a5,a5,8
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147479552
-	addi	a5,a5,4
-	sw	zero,0(a5)
-	li	a5,-2147479552
-	addi	a5,a5,8
-	sw	zero,0(a5)
-	lhu	a5,-24(s0)
-	slli	a3,a5,16
-	lhu	a4,-22(s0)
-	li	a5,-2147479552
-	addi	a5,a5,4
-	or	a4,a3,a4
-	sw	a4,0(a5)
-	lhu	a4,-26(s0)
-	li	a5,196608
-	or	a4,a4,a5
-	li	a5,-2147479552
-	addi	a5,a5,4
-	sw	a4,0(a5)
+	sw	a5,-24(s0)
 	li	a5,-2147479552
 	addi	a5,a5,12
 	li	a4,1
 	sw	a4,0(a5)
-	li	a0,50
-	li	a1,0
-	call	delay
-	li	a5,75
+	li	a5,2
 	sh	a5,-26(s0)
+	li	a5,1024
+	sh	a5,-28(s0)
+	sh	zero,-18(s0)
 	li	a5,-2147479552
 	addi	a5,a5,8
 	li	a4,1
@@ -98,27 +69,68 @@ test_pwm:
 	li	a5,-2147479552
 	addi	a5,a5,8
 	sw	zero,0(a5)
-	lhu	a5,-24(s0)
+	lhu	a5,-28(s0)
 	slli	a3,a5,16
-	lhu	a4,-22(s0)
+	lhu	a4,-26(s0)
 	li	a5,-2147479552
 	addi	a5,a5,4
 	or	a4,a3,a4
 	sw	a4,0(a5)
-	lhu	a4,-26(s0)
+	sh	zero,-18(s0)
+	j	.L4
+.L5:
+	li	a5,-2147479552
+	addi	a5,a5,8
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147479552
+	addi	a5,a5,4
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147479552
+	addi	a5,a5,8
+	sw	zero,0(a5)
+	lhu	a4,-18(s0)
 	li	a5,196608
 	or	a4,a4,a5
 	li	a5,-2147479552
 	addi	a5,a5,4
 	sw	a4,0(a5)
-	li	a0,50
-	li	a1,0
-	call	delay
-	nop
-	lw	ra,28(sp)
-	lw	s0,24(sp)
-	addi	sp,sp,32
-	jr	ra
+	li	a0,40
+	call	delay_ms
+	lhu	a5,-18(s0)
+	addi	a5,a5,64
+	sh	a5,-18(s0)
+.L4:
+	lhu	a4,-18(s0)
+	lhu	a5,-28(s0)
+	bleu	a4,a5,.L5
+	lhu	a5,-28(s0)
+	sh	a5,-18(s0)
+.L6:
+	li	a5,-2147479552
+	addi	a5,a5,8
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147479552
+	addi	a5,a5,4
+	li	a4,1
+	sw	a4,0(a5)
+	li	a5,-2147479552
+	addi	a5,a5,8
+	sw	zero,0(a5)
+	lhu	a4,-18(s0)
+	li	a5,196608
+	or	a4,a4,a5
+	li	a5,-2147479552
+	addi	a5,a5,4
+	sw	a4,0(a5)
+	li	a0,40
+	call	delay_ms
+	lhu	a5,-18(s0)
+	addi	a5,a5,-64
+	sh	a5,-18(s0)
+	j	.L6
 	.size	test_pwm, .-test_pwm
 	.align	2
 	.globl	test_gpio
@@ -148,53 +160,12 @@ test_gpio:
 	sw	a4,0(a5)
 	li	a5,-2147475456
 	addi	a5,a5,4
-	li	a4,49152
-	addi	a4,a4,-337
+	li	a4,175
 	sw	a4,0(a5)
 	li	a5,-2147475456
 	addi	a5,a5,4
-	li	a4,65536
-	addi	a4,a4,-256
+	li	a4,240
 	sw	a4,0(a5)
-	li	a0,200
-	li	a1,0
-	call	delay
-	li	a5,-2147475456
-	addi	a5,a5,8
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147475456
-	addi	a5,a5,4
-	sw	zero,0(a5)
-	li	a5,-2147475456
-	addi	a5,a5,8
-	sw	zero,0(a5)
-	li	a5,-2147475456
-	lw	a5,0(a5)
-	sw	a5,-24(s0)
-	li	a5,-2147475456
-	addi	a5,a5,8
-	li	a4,3
-	sw	a4,0(a5)
-	li	a5,-2147475456
-	addi	a5,a5,4
-	sw	zero,0(a5)
-	li	a5,-2147475456
-	addi	a5,a5,8
-	li	a4,2
-	sw	a4,0(a5)
-	li	a5,-2147475456
-	addi	a5,a5,4
-	li	a4,256
-	sw	a4,0(a5)
-	li	a5,-2147475456
-	addi	a5,a5,4
-	li	a4,131072
-	addi	a4,a4,-256
-	sw	a4,0(a5)
-	li	a0,200
-	li	a1,0
-	call	delay
 	nop
 	lw	ra,28(sp)
 	lw	s0,24(sp)
@@ -216,6 +187,9 @@ test_cordic:
 	li	a5,-2147471360
 	lw	a5,0(a5)
 	sw	a5,-20(s0)
+	li	a1,8
+	lw	a0,-20(s0)
+	call	print_hex
 	li	a5,-2147471360
 	addi	a5,a5,8
 	li	a4,3
@@ -259,13 +233,13 @@ test_cordic:
 	addi	a5,a5,8
 	li	a4,30
 	sw	a4,0(a5)
-.L6:
+.L9:
 	li	a5,-2147471360
 	lw	a5,0(a5)
 	sw	a5,-28(s0)
 	lw	a5,-28(s0)
 	andi	a5,a5,1
-	beq	a5,zero,.L6
+	beq	a5,zero,.L9
 	li	a5,65536
 	addi	a5,a5,1
 	sw	a5,-32(s0)
@@ -292,6 +266,24 @@ test_cordic:
 	li	a5,-2147471360
 	lw	a5,0(a5)
 	sw	a5,-44(s0)
+	li	a1,8
+	lw	a0,-36(s0)
+	call	print_hex
+	li	a0,500
+	li	a1,0
+	call	delay
+	li	a1,8
+	lw	a0,-40(s0)
+	call	print_hex
+	li	a0,500
+	li	a1,0
+	call	delay
+	li	a1,8
+	lw	a0,-44(s0)
+	call	print_hex
+	li	a0,500
+	li	a1,0
+	call	delay
 	li	a5,-2147471360
 	addi	a5,a5,8
 	li	a4,3
@@ -319,13 +311,13 @@ test_cordic:
 	addi	a5,a5,8
 	li	a4,30
 	sw	a4,0(a5)
-.L7:
+.L10:
 	li	a5,-2147471360
 	lw	a5,0(a5)
 	sw	a5,-28(s0)
 	lw	a5,-28(s0)
 	andi	a5,a5,1
-	beq	a5,zero,.L7
+	beq	a5,zero,.L10
 	li	a5,-2147471360
 	addi	a5,a5,4
 	lw	a4,-32(s0)
@@ -352,19 +344,19 @@ test_cordic:
 	li	a1,8
 	lw	a0,-36(s0)
 	call	print_hex
-	li	a0,200
+	li	a0,500
 	li	a1,0
 	call	delay
 	li	a1,8
 	lw	a0,-40(s0)
 	call	print_hex
-	li	a0,200
+	li	a0,500
 	li	a1,0
 	call	delay
 	li	a1,8
 	lw	a0,-44(s0)
 	call	print_hex
-	li	a0,200
+	li	a0,500
 	li	a1,0
 	call	delay
 	nop
@@ -383,17 +375,14 @@ delay_ms:
 	addi	s0,sp,48
 	sw	a0,-36(s0)
 	lw	a5,-36(s0)
-	addi	a3,a5,-1
-	mv	a4,a3
-	slli	a5,a4,5
-	mv	a4,a5
-	sub	a4,a4,a3
-	slli	a5,a4,6
-	sub	a5,a5,a4
+	addi	a4,a5,-1
+	mv	a5,a4
 	slli	a5,a5,3
-	add	a5,a5,a3
-	slli	a5,a5,6
-	li	a1,820
+	add	a5,a5,a4
+	slli	a5,a5,4
+	add	a5,a5,a4
+	slli	a5,a5,1
+	li	a1,1000
 	mv	a0,a5
 	call	__udivsi3
 	mv	a5,a0
@@ -419,31 +408,31 @@ delay:
 	sw	a0,-40(s0)
 	sw	a1,-36(s0)
 	sw	zero,-20(s0)
-	j	.L10
-.L11:
+	j	.L13
+.L14:
  #APP
-# 172 "firmware/main.c" 1
+# 176 "Quartus/firmware/main_quartus.c" 1
 	nop
 # 0 "" 2
  #NO_APP
 	lw	a3,-20(s0)
 	addi	a3,a3,1
 	sw	a3,-20(s0)
-.L10:
+.L13:
 	lw	a3,-20(s0)
 	mv	a4,a3
 	srai	a3,a3,31
 	mv	a5,a3
 	lw	a3,-36(s0)
 	mv	a2,a5
-	bgtu	a3,a2,.L11
+	bgtu	a3,a2,.L14
 	lw	a3,-36(s0)
 	mv	a2,a5
-	bne	a3,a2,.L13
+	bne	a3,a2,.L16
 	lw	a3,-40(s0)
 	mv	a2,a4
-	bgtu	a3,a2,.L11
-.L13:
+	bgtu	a3,a2,.L14
+.L16:
 	nop
 	lw	ra,44(sp)
 	lw	s0,40(sp)

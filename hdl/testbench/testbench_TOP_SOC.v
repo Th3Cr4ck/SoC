@@ -47,7 +47,7 @@ module testbench_TOP_SOC;
             $dumpvars(1, testbench_TOP_SOC.uut.soc.picorv32_AIP.memory.mem[idx]);
         end
 */
-    repeat (10) begin
+    repeat (15) begin
       repeat (10000) @(posedge clk);
       $display("+100000 cycles");
     end

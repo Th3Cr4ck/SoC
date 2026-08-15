@@ -1,3 +1,21 @@
 *.pdf
 *.bak
 *.docx
+
+# Quartus generated files
+Quartus/db/
+Quartus/incremental_db/
+Quartus/output_files/
+Quartus/simulation/
+
+# Quartus database / compilation artifacts
+*.rpt
+*.summary
+*.done
+*.pin
+*.sof
+*.pof
+*.jic
+*.qws
+c5_pin_model_dump.txt
+
