@@ -26,8 +26,6 @@
 #define AIP_CONFIG   2
 #define AIP_START    3
 
-#define PWM_CCONFREG 0
-#define PWM_ACONFREG 1
 
 #define GPIO_MMEMOUT  0 
 #define GPIO_AMEMOUT  1
@@ -45,8 +43,11 @@
 #define INT_BIT_DONE (1U << 0)
 #define INT_EN_DONE  (1U << 16)
 
+typedef void (*irq_handler_t)(void);
+
 // irq.c
 uint32_t *irq(uint32_t *regs, uint32_t irqs);
+void irq_register_handler(uint8_t irq_num, irq_handler_t handler);
 
 // print.c
 void putchar(char c);

@@ -1,6 +1,8 @@
-#include <stdint.h>
 #include "firmware.h"
-
+#include "id00005010_driver.h"
+#include "id00005020_driver.h"
+#include "id00005030_driver.h"
+#include <stdint.h>
 
 void test_pwm(void);
 void test_gpio(void);
@@ -8,13 +10,13 @@ void test_cordic(void);
 void delay(uint64_t count);
 void delay_ms(uint32_t ms);
 
-int main (int argc, char * argv[]) {
+int main(int argc, char *argv[]) {
 
-  reg_uart_clkdiv = 104;//for simulation only - 5208 for 9600;//104 is 12 MHz for 115200, and 434 is 50Mhz for 115200
-  
-  print("Hola desde la UART\n");
+  reg_uart_clkdiv = 104; // for simulation only - 5208 for 9600;//104 is 12 MHz
+                         // for 115200, and 434 is 50Mhz for 115200
+
   test_pwm();
-  
+
   test_gpio();
 
   test_cordic();
@@ -23,147 +25,127 @@ int main (int argc, char * argv[]) {
 }
 
 void test_pwm(void) {
-  PWM_BASE_ADDR[AIP_CONFIG] = IDREG;
-  uint32_t id = PWM_BASE_ADDR[AIP_DATA_OUT];
 
-  // while(1) {
-  uint16_t prescaler = 2;
-  uint16_t period = 100;
-  uint16_t duty = 30;
+  uint8_t started = 0;
+  uint32_t id = 0;
+  id = id00005010_init(0);
+  print_hex(id, 8);
+  putchar('\n');
 
-  PWM_BASE_ADDR[AIP_CONFIG] = PWM_ACONFREG;
-  PWM_BASE_ADDR[AIP_DATA_IN] = 0;
-  PWM_BASE_ADDR[AIP_CONFIG] = PWM_CCONFREG;
-  PWM_BASE_ADDR[AIP_DATA_IN] = ((uint32_t)period << 16) | prescaler; // Prescaler=2; Period=1024
-  PWM_BASE_ADDR[AIP_DATA_IN] = 0x00030000 | duty; // Duty=64; Polarity=1; Enable=1
-  *(PWM_BASE_ADDR+AIP_START) = 1; // Start
-  delay(50); 
+  // while (1) {
+  
+    id00005010_set_prescaler(2);
+    id00005010_set_period(100);
+    id00005010_set_duty(30);
+    id00005010_set_polarity(POL_HIGH);
+    id00005010_enable();
 
-  duty = 75;
-  PWM_BASE_ADDR[AIP_CONFIG] = PWM_ACONFREG;
-  PWM_BASE_ADDR[AIP_DATA_IN] = 0;
-  PWM_BASE_ADDR[AIP_CONFIG] = PWM_CCONFREG;
-  PWM_BASE_ADDR[AIP_DATA_IN] = ((uint32_t)period << 16) | prescaler; // Prescaler=2; Period=1024
-  PWM_BASE_ADDR[AIP_DATA_IN] = 0x00030000 | duty; // Duty=64; Polarity=1; Enable=1
-  delay(50);
+    if (started == 0) {
+      started = 1;
+      id00005010_startIP();
+    }
+
+    delay(100);
+
+    id00005010_set_duty(75);
   // }
-
 }
 
 void test_gpio(void) {
 
-  GPIO_BASE_ADDR[AIP_CONFIG] = IDREG;
-  uint32_t id = GPIO_BASE_ADDR[AIP_DATA_OUT];
+  uint32_t id = id00005020_init(1);
+  print_hex(id, 8);
+  putchar('\n');
 
   // GPIO como entrada / salida
-  GPIO_BASE_ADDR[AIP_CONFIG] = GPIO_ACONFREG;
-  GPIO_BASE_ADDR[AIP_DATA_IN] = 0;
+  /* ------- ODR CAFE ---------- */
+  id00005020_set_iomode(0xFF00); // {8b output(ODR), 8b input}
+  id00005020_set_odr(0xBEAF); // ODR
 
-  GPIO_BASE_ADDR[AIP_CONFIG] = GPIO_CCONFREG;
-  GPIO_BASE_ADDR[AIP_DATA_IN] = 0x0000BEAF; // ODR
-  GPIO_BASE_ADDR[AIP_DATA_IN] = 0x0000FF00; // {8b output(ODR), 8b input}
+  delay(100);
 
-  delay(200);
+  // Leer IDR y ODR
+  uint16_t idr;
+  id00005020_get_idr(&idr);
+  print("IDR:");
+  print_hex(idr, 4);
+  putchar('\n');
 
-  GPIO_BASE_ADDR[AIP_CONFIG] = GPIO_AMEMOUT;
-  GPIO_BASE_ADDR[AIP_DATA_IN] = 0;
+  uint16_t odr;
+  id00005020_get_odr(&odr);
+  print("ODR:");
+  print_hex(odr, 4);
+  putchar('\n');
 
-  GPIO_BASE_ADDR[AIP_CONFIG] = GPIO_MMEMOUT;
-  uint32_t memVal = GPIO_BASE_ADDR[AIP_DATA_OUT]; // {16b ODR 16b IDR}
+  /* ------- BSSR SET ---------- */
+  id00005020_bsrr_set(0x00000100); // BSRR (Set bit 8)
 
-  GPIO_BASE_ADDR[AIP_CONFIG] = GPIO_ACONFREG;
-  GPIO_BASE_ADDR[AIP_DATA_IN] = 0;
+  // Leer IDR y ODR
+  id00005020_get_idr(&idr);
+  print("IDR:");
+  print_hex(idr, 4);
+  putchar('\n');
 
-  GPIO_BASE_ADDR[AIP_CONFIG] = GPIO_CCONFREG;
-  GPIO_BASE_ADDR[AIP_DATA_IN] = 0x00000100; // BSRR (Set bit 8)
-  GPIO_BASE_ADDR[AIP_DATA_IN] = 0x0001FF00; // {8b output(BSSR), 8b input}
-  
-  delay(200);
+  id00005020_get_odr(&odr);
+  print("ODR:");
+  print_hex(odr, 4);
+  putchar('\n');
+  delay(100);
+
+  /* ------- ODR CAFE ---------- */
+  id00005020_set_odr(0xCAFE);
+
+  // Leer IDR y ODR
+  id00005020_get_idr(&idr);
+  print("IDR:");
+  print_hex(idr, 4);
+  putchar('\n');
+
+  id00005020_get_odr(&odr);
+  print("ODR:");
+  print_hex(odr, 4);
+  putchar('\n');
 }
 
 void test_cordic(void) {
-  
-  CORDIC_BASE_ADDR[AIP_CONFIG] = IDREG;
-  uint32_t id = CORDIC_BASE_ADDR[AIP_DATA_OUT];
+
+  uint32_t id = id00005030_init(2);
+  print_hex(id, 8);
+  putchar('\n');
 
   /* CASO ROTACION */
-  CORDIC_BASE_ADDR[AIP_CONFIG] = CORDIC_ACONFREG;
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = 0;
+  id00005030_cordic_process(0x0400, 0, 0x324, ROTATION);
+  uint32_t x_out, y_out, z_out;
+  id00005030_read_results(&x_out, &y_out, &z_out);
+  print("\nX=");
+  print_hex(x_out, 4);
+  putchar('\n');
+  print("Y=");
+  print_hex(y_out, 4);
+  putchar('\n');
+  print("Z=");
+  print_hex(z_out, 4);
+  putchar('\n');
 
-  CORDIC_BASE_ADDR[AIP_CONFIG] = CORDIC_CCONFREG;
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = 0x00000400;
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = 0x00010324;
+  delay(100);
 
-  // Enable INT
-  CORDIC_BASE_ADDR[AIP_CONFIG] = STATUS;
-  uint32_t status = CORDIC_BASE_ADDR[AIP_DATA_OUT]; // get status reg
-
-  status |= INT_EN_DONE;
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = status;
-
-  // START
-  CORDIC_BASE_ADDR[AIP_START] = 1;
-
-  // Wait INT
-  uint32_t status_read;
-    CORDIC_BASE_ADDR[AIP_CONFIG] = STATUS;
-  do {
-    status_read = CORDIC_BASE_ADDR[AIP_DATA_OUT]; // get status reg
-  } while (!(status_read & INT_BIT_DONE));
-  
-  // Clean INT
-  uint32_t clean_status = 0x00010001;
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = clean_status;
-
-  // Read results
-  CORDIC_BASE_ADDR[AIP_CONFIG] = CORDIC_AMEMOUT;;
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = 0;
-  
-  CORDIC_BASE_ADDR[AIP_CONFIG] = CORDIC_MMEMOUT;
-  uint32_t x_out = CORDIC_BASE_ADDR[AIP_DATA_OUT];
-  uint32_t y_out = CORDIC_BASE_ADDR[AIP_DATA_OUT];
-  uint32_t z_out = CORDIC_BASE_ADDR[AIP_DATA_OUT];
-
-  /* CASO VECTORIZACION */
-  CORDIC_BASE_ADDR[AIP_CONFIG] = CORDIC_ACONFREG;
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = 0;
-
-  CORDIC_BASE_ADDR[AIP_CONFIG] = CORDIC_CCONFREG;
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = 0x04000400;
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = 0x00000000;
-  
-  // START
-  CORDIC_BASE_ADDR[AIP_START] = 1;
-
-  // Wait INT
-  CORDIC_BASE_ADDR[AIP_CONFIG] = STATUS;
-  do {
-    status_read = CORDIC_BASE_ADDR[AIP_DATA_OUT]; // get status reg
-  } while (!(status_read & INT_BIT_DONE));
-  
-  // Clean INT
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = clean_status;
-
-  // Read results
-  CORDIC_BASE_ADDR[AIP_CONFIG] = CORDIC_AMEMOUT;
-  CORDIC_BASE_ADDR[AIP_DATA_IN] = 0;
-  
-  CORDIC_BASE_ADDR[AIP_CONFIG] = CORDIC_MMEMOUT;
-  x_out = CORDIC_BASE_ADDR[AIP_DATA_OUT];
-  y_out = CORDIC_BASE_ADDR[AIP_DATA_OUT];
-  z_out = CORDIC_BASE_ADDR[AIP_DATA_OUT];
-  
-  print_hex(x_out, 8);
-  delay(200);
-  print_hex(y_out, 8);
-  delay(200);
-  print_hex(z_out, 8);
-  delay(200);
-
+  // /* CASO VECTORIZACION */
+  id00005030_cordic_process(0x0400, 0x0400, 0, VECTORIZATION);
+  id00005030_read_results(&x_out, &y_out, &z_out);
+  print("X=");
+  print_hex(x_out, 4);
+  putchar('\n');
+  print("Y=");
+  print_hex(y_out, 4);
+  putchar('\n');
+  print("Z=");
+  print_hex(z_out, 4);
+  putchar('\n');
 }
 
 void delay_ms(uint32_t ms) {
-  uint64_t count = (ms-1UL) * 1000000UL / 820; // -1 para quitar el tiempo que toma el calculo
+  uint64_t count = (ms - 1UL) * 1000000UL /
+                   820; // -1 para quitar el tiempo que toma el calculo
   delay(count);
 }
 

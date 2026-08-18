@@ -47,9 +47,9 @@ module testbench_TOP_SOC;
             $dumpvars(1, testbench_TOP_SOC.uut.soc.picorv32_AIP.memory.mem[idx]);
         end
 */
-    repeat (15) begin
+    repeat (30) begin
       repeat (10000) @(posedge clk);
-      $display("+100000 cycles");
+      // $display("+100000 cycles");
     end
     $dumpall;
     $finish;
@@ -150,8 +150,16 @@ module testbench_TOP_SOC;
     repeat (ser_half_period) @(posedge clk_12Mhz);
     ->ser_sample;  // stop bit
 
-    if (buffer < 32 || buffer >= 127) $display("Serial data: %d", buffer);
-    else $display("Serial data: '%c'", buffer);
+    // if (buffer < 32 || buffer >= 127) $display("Serial data: %d", buffer);
+    // else $display("Serial data: '%c'", buffer);
+
+    if (buffer == 8'h0A) begin
+      $write("\n");
+    end else if (buffer == 8'h0D) begin
+      // Ignorar CR 
+    end else begin
+      $write("%c", buffer);
+    end
   end
 
 

@@ -7,14 +7,24 @@
 
 #include "firmware.h"
 
+#define NUM_IRQS 3
+#define IRQ5 5
+#define IRQ6 6
+#define IRQ7 7
+
+static irq_handler_t irq_vector[NUM_IRQS] = {0};
+
 uint32_t *irq(uint32_t *regs, uint32_t irqs)
 {
-	
-	// checking compressed isa q0 reg handling
-	if ((irqs & 7) != 0) {
-		print(" IRQ 7 -- Start Ipcore");
-		print("\n");
-	}
+   for (uint8_t i = IRQ5; i <= IRQ7; i++)
+    {
+        if (irqs & (1 << i))
+        {
+            // Llamar a manejador si existe
+            if (irq_vector[i-IRQ5])
+                irq_vector[i-IRQ5]();
+        }
+    }
 
 	if ((irqs & 6) != 0) {
 		uint32_t pc = (regs[0] & 1) ? regs[0] - 3 : regs[0] - 4;
@@ -67,18 +77,6 @@ uint32_t *irq(uint32_t *regs, uint32_t irqs)
 			print(": 0x");
 			print_hex(instr, ((instr & 3) == 3) ? 8 : 4);
 			print("\n");
-			while (1)
-			{
-				if(reg_leds== 0)
-					reg_leds = 1;
-				else
-					reg_leds = 0;	
-				for (int rep = 200; rep > 0; rep--)
-				//	for (int rep = 100000; rep > 0; rep--)
-				{
-					__asm__ volatile ("nop");//asm volatile("");
-				}
-			}
 		}
 	}
 	//print("Regs");
@@ -89,3 +87,8 @@ uint32_t *irq(uint32_t *regs, uint32_t irqs)
 	return regs;
 }
 
+void irq_register_handler(uint8_t irq_num, irq_handler_t handler)
+{
+    if (irq_num == IRQ5 | irq_num == IRQ6 || irq_num == IRQ7)
+        irq_vector[irq_num-IRQ5] = handler;
+}

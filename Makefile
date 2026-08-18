@@ -58,9 +58,9 @@ sim_soc: $(SIM)/$(NAME)_tb.out
 fpga_sections.lds: sections.lds
 	$(TOOLCHAIN_PREFIX)cpp -P -DICEBREAKER -o $@ $^
 
-main_fw.elf: $(FIRMWARE)/fpga_sections.lds $(FIRMWARE)/print.c $(FIRMWARE)/irqb.c $(FIRMWARE)/start.S $(FIRMWARE)/main.c
-	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRMWARE)/main_fw.o $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRMWARE)/main.c -Os
-	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRMWARE)/main_fw.elf $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRMWARE)/main.c -Os
+main_fw.elf: $(FIRMWARE)/fpga_sections.lds $(FIRMWARE)/print.c $(FIRMWARE)/irqb.c $(FIRMWARE)/start.S $(FIRMWARE)/aip.c $(FIRMWARE)/*.c $(FIRMWARE)/main.c
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRMWARE)/main_fw.o $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRMWARE)/aip.c $(FIRMWARE)/id000050*.c $(FIRMWARE)/main.c -Os
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRMWARE)/main_fw.elf $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRMWARE)/aip.c $(FIRMWARE)/id000050*.c $(FIRMWARE)/main.c -Os
 	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRMWARE)/irqb.c -o $(FIRMWARE)/irqb.s
 	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRMWARE)/main.c -o $(FIRMWARE)/main.s
 
