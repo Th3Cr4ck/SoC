@@ -79,9 +79,9 @@ diss:
 main_fw.txt: main_fw.hex diss memtarce
 	$(PYTHON) $(FIRMWARE)/hextoMEM_v3.py $(FIRMWARE)/main_fw.hex $(FIRMWARE)/main_fw.txt 8192 
 
-main_fw.elf.fpga: $(FIRMWARE)/fpga_sections.lds $(FIRMWARE)/print.c $(FIRMWARE)/irqb.c $(FIRMWARE)/start.S $(FIRM_QUARTUS)/main_quartus.c
-	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -I$(FIRMWARE) -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRM_QUARTUS)/main_fw.o $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRM_QUARTUS)/gpio_uart.c $(FIRM_QUARTUS)/main_quartus.c -Os
-	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -I$(FIRMWARE) -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRM_QUARTUS)/main_fw.elf $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRM_QUARTUS)/gpio_uart.c $(FIRM_QUARTUS)/main_quartus.c -Os
+main_fw.elf.fpga: $(FIRMWARE)/fpga_sections.lds $(FIRMWARE)/print.c $(FIRMWARE)/irqb.c $(FIRMWARE)/start.S $(FIRM_QUARTUS)/main_quartus.c $(FIRMWARE)/aip.c $(FIRMWARE)/id*.c
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -I$(FIRMWARE) -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRM_QUARTUS)/main_fw.o $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRM_QUARTUS)/gpio_uart.c $(FIRMWARE)/aip.c $(FIRMWARE)/id*.c $(FIRM_QUARTUS)/main_quartus.c -Os
+	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -I$(FIRMWARE) -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -o $(FIRM_QUARTUS)/main_fw.elf $(FIRMWARE)/start.S $(FIRMWARE)/irqb.c $(FIRMWARE)/print.c $(FIRM_QUARTUS)/gpio_uart.c $(FIRMWARE)/aip.c $(FIRMWARE)/id*.c $(FIRM_QUARTUS)/main_quartus.c -Os
 	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRMWARE)/irqb.c -o $(FIRMWARE)/irqb.s
 	$(TOOLCHAIN_PREFIX)gcc $(CFLAGS) -DICEBREAKER -mabi=ilp32 -march=rv32i -I$(FIRMWARE) -Wl,-Bstatic,-T,$(FIRMWARE)/fpga_sections.lds,--strip-debug -ffreestanding -nostartfiles -S $(FIRM_QUARTUS)/main_quartus.c -o $(FIRM_QUARTUS)/main.s
 

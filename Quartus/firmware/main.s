@@ -7,7 +7,7 @@
 	.section	.rodata
 	.align	2
 .LC0:
-	.string	"Hola desde la UART\n"
+	.string	"Inicio\n"
 	.text
 	.align	2
 	.globl	main
@@ -26,8 +26,8 @@ main:
 	addi	a0,a5,%lo(.LC0)
 	call	print
 	call	test_pwm
-	call	test_cordic
 	call	test_gpio
+	call	test_cordic
 	li	a5,0
 	mv	a0,a5
 	lw	ra,28(sp)
@@ -43,95 +43,71 @@ test_pwm:
 	sw	ra,28(sp)
 	sw	s0,24(sp)
 	addi	s0,sp,32
-	li	a5,-2147479552
-	addi	a5,a5,8
-	li	a4,31
-	sw	a4,0(a5)
-	li	a5,-2147479552
-	lw	a5,0(a5)
+	sb	zero,-17(s0)
+	sw	zero,-24(s0)
+	li	a0,0
+	call	id00005010_init
+	mv	a5,a0
 	sw	a5,-24(s0)
-	li	a5,-2147479552
-	addi	a5,a5,12
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,2
-	sh	a5,-26(s0)
-	li	a5,1024
-	sh	a5,-28(s0)
-	sh	zero,-18(s0)
-	li	a5,-2147479552
-	addi	a5,a5,8
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147479552
-	addi	a5,a5,4
-	sw	zero,0(a5)
-	li	a5,-2147479552
-	addi	a5,a5,8
-	sw	zero,0(a5)
-	lhu	a5,-28(s0)
-	slli	a3,a5,16
-	lhu	a4,-26(s0)
-	li	a5,-2147479552
-	addi	a5,a5,4
-	or	a4,a3,a4
-	sw	a4,0(a5)
-	sh	zero,-18(s0)
-	j	.L4
-.L5:
-	li	a5,-2147479552
-	addi	a5,a5,8
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147479552
-	addi	a5,a5,4
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147479552
-	addi	a5,a5,8
-	sw	zero,0(a5)
-	lhu	a4,-18(s0)
-	li	a5,196608
-	or	a4,a4,a5
-	li	a5,-2147479552
-	addi	a5,a5,4
-	sw	a4,0(a5)
-	li	a0,40
-	call	delay_ms
-	lhu	a5,-18(s0)
-	addi	a5,a5,64
-	sh	a5,-18(s0)
+	li	a1,8
+	lw	a0,-24(s0)
+	call	print_hex
+	li	a0,10
+	call	putchar
+	li	a0,2
+	call	id00005010_set_prescaler
+	li	a0,100
+	call	id00005010_set_period
+	li	a0,30
+	call	id00005010_set_duty
+	li	a0,1
+	call	id00005010_set_polarity
+	call	id00005010_enable
+	lbu	a5,-17(s0)
+	bne	a5,zero,.L4
+	li	a5,1
+	sb	a5,-17(s0)
+	call	id00005010_startIP
 .L4:
-	lhu	a4,-18(s0)
-	lhu	a5,-28(s0)
-	bleu	a4,a5,.L5
-	lhu	a5,-28(s0)
-	sh	a5,-18(s0)
-.L6:
-	li	a5,-2147479552
-	addi	a5,a5,8
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147479552
-	addi	a5,a5,4
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147479552
-	addi	a5,a5,8
-	sw	zero,0(a5)
-	lhu	a4,-18(s0)
-	li	a5,196608
-	or	a4,a4,a5
-	li	a5,-2147479552
-	addi	a5,a5,4
-	sw	a4,0(a5)
-	li	a0,40
+	li	a0,1000
 	call	delay_ms
-	lhu	a5,-18(s0)
-	addi	a5,a5,-64
-	sh	a5,-18(s0)
-	j	.L6
+	li	a0,60
+	call	id00005010_set_duty
+	li	a0,1000
+	call	delay_ms
+	li	a0,100
+	call	id00005010_set_duty
+	li	a0,1000
+	call	delay_ms
+	li	a0,60
+	call	id00005010_set_duty
+	li	a0,1000
+	call	delay_ms
+	li	a0,30
+	call	id00005010_set_duty
+	li	a0,1000
+	call	delay_ms
+	call	id00005010_disable
+	nop
+	lw	ra,28(sp)
+	lw	s0,24(sp)
+	addi	sp,sp,32
+	jr	ra
 	.size	test_pwm, .-test_pwm
+	.section	.rodata
+	.align	2
+.LC1:
+	.string	"4b salida, 4b entrada\n"
+	.align	2
+.LC2:
+	.string	"IDR:"
+	.align	2
+.LC3:
+	.string	"ODR:"
+	.align	2
+.LC4:
+	.string	"BSRR Set bit 6\n"
+	.text
 	.align	2
 	.globl	test_gpio
 	.type	test_gpio, @function
@@ -140,229 +116,218 @@ test_gpio:
 	sw	ra,28(sp)
 	sw	s0,24(sp)
 	addi	s0,sp,32
-	li	a5,-2147475456
-	addi	a5,a5,8
-	li	a4,31
-	sw	a4,0(a5)
-	li	a5,-2147475456
-	lw	a5,0(a5)
+	li	a0,1
+	call	id00005020_init
+	mv	a5,a0
 	sw	a5,-20(s0)
-	li	a5,-2147475456
-	addi	a5,a5,8
-	li	a4,3
-	sw	a4,0(a5)
-	li	a5,-2147475456
-	addi	a5,a5,4
-	sw	zero,0(a5)
-	li	a5,-2147475456
-	addi	a5,a5,8
-	li	a4,2
-	sw	a4,0(a5)
-	li	a5,-2147475456
-	addi	a5,a5,4
-	li	a4,175
-	sw	a4,0(a5)
-	li	a5,-2147475456
-	addi	a5,a5,4
-	li	a4,240
-	sw	a4,0(a5)
+	li	a1,8
+	lw	a0,-20(s0)
+	call	print_hex
+	li	a0,10
+	call	putchar
+	li	a0,240
+	call	id00005020_set_iomode
+	li	a5,49152
+	addi	a0,a5,-337
+	call	id00005020_set_odr
+	lui	a5,%hi(.LC1)
+	addi	a0,a5,%lo(.LC1)
+	call	print
+	li	a0,1000
+	call	delay_ms
+	li	a0,1000
+	call	delay_ms
+	li	a0,1000
+	call	delay_ms
+	addi	a5,s0,-22
+	mv	a0,a5
+	call	id00005020_get_idr
+	lui	a5,%hi(.LC2)
+	addi	a0,a5,%lo(.LC2)
+	call	print
+	lhu	a5,-22(s0)
+	li	a1,4
+	mv	a0,a5
+	call	print_hex
+	li	a0,10
+	call	putchar
+	addi	a5,s0,-24
+	mv	a0,a5
+	call	id00005020_get_odr
+	lui	a5,%hi(.LC3)
+	addi	a0,a5,%lo(.LC3)
+	call	print
+	lhu	a5,-24(s0)
+	li	a1,4
+	mv	a0,a5
+	call	print_hex
+	li	a0,10
+	call	putchar
+	li	a0,64
+	call	id00005020_bsrr_set
+	lui	a5,%hi(.LC4)
+	addi	a0,a5,%lo(.LC4)
+	call	print
+	li	a0,1000
+	call	delay_ms
+	li	a0,1000
+	call	delay_ms
+	li	a0,1000
+	call	delay_ms
+	addi	a5,s0,-22
+	mv	a0,a5
+	call	id00005020_get_idr
+	lui	a5,%hi(.LC2)
+	addi	a0,a5,%lo(.LC2)
+	call	print
+	lhu	a5,-22(s0)
+	li	a1,4
+	mv	a0,a5
+	call	print_hex
+	li	a0,10
+	call	putchar
+	addi	a5,s0,-24
+	mv	a0,a5
+	call	id00005020_get_odr
+	lui	a5,%hi(.LC3)
+	addi	a0,a5,%lo(.LC3)
+	call	print
+	lhu	a5,-24(s0)
+	li	a1,4
+	mv	a0,a5
+	call	print_hex
+	li	a0,10
+	call	putchar
 	nop
 	lw	ra,28(sp)
 	lw	s0,24(sp)
 	addi	sp,sp,32
 	jr	ra
 	.size	test_gpio, .-test_gpio
+	.section	.rodata
+	.align	2
+.LC5:
+	.string	"\nRotacion\n"
+	.align	2
+.LC6:
+	.string	"X="
+	.align	2
+.LC7:
+	.string	"Y="
+	.align	2
+.LC8:
+	.string	"Z="
+	.align	2
+.LC9:
+	.string	"Vectorizacion\n"
+	.text
 	.align	2
 	.globl	test_cordic
 	.type	test_cordic, @function
 test_cordic:
-	addi	sp,sp,-48
-	sw	ra,44(sp)
-	sw	s0,40(sp)
-	addi	s0,sp,48
-	li	a5,-2147471360
-	addi	a5,a5,8
-	li	a4,31
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	lw	a5,0(a5)
+	addi	sp,sp,-32
+	sw	ra,28(sp)
+	sw	s0,24(sp)
+	addi	s0,sp,32
+	li	a0,2
+	call	id00005030_init
+	mv	a5,a0
 	sw	a5,-20(s0)
 	li	a1,8
 	lw	a0,-20(s0)
 	call	print_hex
-	li	a5,-2147471360
-	addi	a5,a5,8
-	li	a4,3
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,4
-	sw	zero,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,8
-	li	a4,2
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,4
-	li	a4,1024
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,4
-	li	a4,65536
-	addi	a4,a4,804
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,8
-	li	a4,30
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	lw	a5,0(a5)
-	sw	a5,-24(s0)
-	lw	a4,-24(s0)
-	li	a5,65536
-	or	a5,a4,a5
-	sw	a5,-24(s0)
-	li	a5,-2147471360
-	addi	a5,a5,4
-	lw	a4,-24(s0)
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,12
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,8
-	li	a4,30
-	sw	a4,0(a5)
-.L9:
-	li	a5,-2147471360
-	lw	a5,0(a5)
-	sw	a5,-28(s0)
+	li	a0,10
+	call	putchar
+	li	a3,1
+	li	a2,804
+	li	a1,0
+	li	a0,1024
+	call	id00005030_cordic_process
+	addi	a3,s0,-32
+	addi	a4,s0,-28
+	addi	a5,s0,-24
+	mv	a2,a3
+	mv	a1,a4
+	mv	a0,a5
+	call	id00005030_read_results
+	lui	a5,%hi(.LC5)
+	addi	a0,a5,%lo(.LC5)
+	call	print
+	lui	a5,%hi(.LC6)
+	addi	a0,a5,%lo(.LC6)
+	call	print
+	lw	a5,-24(s0)
+	li	a1,4
+	mv	a0,a5
+	call	print_hex
+	li	a0,10
+	call	putchar
+	lui	a5,%hi(.LC7)
+	addi	a0,a5,%lo(.LC7)
+	call	print
 	lw	a5,-28(s0)
-	andi	a5,a5,1
-	beq	a5,zero,.L9
-	li	a5,65536
-	addi	a5,a5,1
-	sw	a5,-32(s0)
-	li	a5,-2147471360
-	addi	a5,a5,4
-	lw	a4,-32(s0)
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,8
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,4
-	sw	zero,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,8
-	sw	zero,0(a5)
-	li	a5,-2147471360
-	lw	a5,0(a5)
-	sw	a5,-36(s0)
-	li	a5,-2147471360
-	lw	a5,0(a5)
-	sw	a5,-40(s0)
-	li	a5,-2147471360
-	lw	a5,0(a5)
-	sw	a5,-44(s0)
-	li	a1,8
-	lw	a0,-36(s0)
+	li	a1,4
+	mv	a0,a5
 	call	print_hex
-	li	a0,500
-	li	a1,0
-	call	delay
-	li	a1,8
-	lw	a0,-40(s0)
+	li	a0,10
+	call	putchar
+	lui	a5,%hi(.LC8)
+	addi	a0,a5,%lo(.LC8)
+	call	print
+	lw	a5,-32(s0)
+	li	a1,4
+	mv	a0,a5
 	call	print_hex
-	li	a0,500
-	li	a1,0
-	call	delay
-	li	a1,8
-	lw	a0,-44(s0)
+	li	a0,10
+	call	putchar
+	li	a0,100
+	call	delay_ms
+	li	a3,0
+	li	a2,0
+	li	a1,1024
+	li	a0,1024
+	call	id00005030_cordic_process
+	addi	a3,s0,-32
+	addi	a4,s0,-28
+	addi	a5,s0,-24
+	mv	a2,a3
+	mv	a1,a4
+	mv	a0,a5
+	call	id00005030_read_results
+	lui	a5,%hi(.LC9)
+	addi	a0,a5,%lo(.LC9)
+	call	print
+	lui	a5,%hi(.LC6)
+	addi	a0,a5,%lo(.LC6)
+	call	print
+	lw	a5,-24(s0)
+	li	a1,4
+	mv	a0,a5
 	call	print_hex
-	li	a0,500
-	li	a1,0
-	call	delay
-	li	a5,-2147471360
-	addi	a5,a5,8
-	li	a4,3
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,4
-	sw	zero,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,8
-	li	a4,2
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,4
-	li	a4,67108864
-	addi	a4,a4,1024
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,4
-	sw	zero,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,12
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,8
-	li	a4,30
-	sw	a4,0(a5)
-.L10:
-	li	a5,-2147471360
-	lw	a5,0(a5)
-	sw	a5,-28(s0)
+	li	a0,10
+	call	putchar
+	lui	a5,%hi(.LC7)
+	addi	a0,a5,%lo(.LC7)
+	call	print
 	lw	a5,-28(s0)
-	andi	a5,a5,1
-	beq	a5,zero,.L10
-	li	a5,-2147471360
-	addi	a5,a5,4
-	lw	a4,-32(s0)
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,8
-	li	a4,1
-	sw	a4,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,4
-	sw	zero,0(a5)
-	li	a5,-2147471360
-	addi	a5,a5,8
-	sw	zero,0(a5)
-	li	a5,-2147471360
-	lw	a5,0(a5)
-	sw	a5,-36(s0)
-	li	a5,-2147471360
-	lw	a5,0(a5)
-	sw	a5,-40(s0)
-	li	a5,-2147471360
-	lw	a5,0(a5)
-	sw	a5,-44(s0)
-	li	a1,8
-	lw	a0,-36(s0)
+	li	a1,4
+	mv	a0,a5
 	call	print_hex
-	li	a0,500
-	li	a1,0
-	call	delay
-	li	a1,8
-	lw	a0,-40(s0)
+	li	a0,10
+	call	putchar
+	lui	a5,%hi(.LC8)
+	addi	a0,a5,%lo(.LC8)
+	call	print
+	lw	a5,-32(s0)
+	li	a1,4
+	mv	a0,a5
 	call	print_hex
-	li	a0,500
-	li	a1,0
-	call	delay
-	li	a1,8
-	lw	a0,-44(s0)
-	call	print_hex
-	li	a0,500
-	li	a1,0
-	call	delay
+	li	a0,10
+	call	putchar
 	nop
-	lw	ra,44(sp)
-	lw	s0,40(sp)
-	addi	sp,sp,48
+	lw	ra,28(sp)
+	lw	s0,24(sp)
+	addi	sp,sp,32
 	jr	ra
 	.size	test_cordic, .-test_cordic
 	.align	2
@@ -375,14 +340,17 @@ delay_ms:
 	addi	s0,sp,48
 	sw	a0,-36(s0)
 	lw	a5,-36(s0)
-	addi	a4,a5,-1
-	mv	a5,a4
+	addi	a3,a5,-1
+	mv	a4,a3
+	slli	a5,a4,5
+	mv	a4,a5
+	sub	a4,a4,a3
+	slli	a5,a4,6
+	sub	a5,a5,a4
 	slli	a5,a5,3
-	add	a5,a5,a4
-	slli	a5,a5,4
-	add	a5,a5,a4
-	slli	a5,a5,1
-	li	a1,1000
+	add	a5,a5,a3
+	slli	a5,a5,6
+	li	a1,820
 	mv	a0,a5
 	call	__udivsi3
 	mv	a5,a0
@@ -408,31 +376,31 @@ delay:
 	sw	a0,-40(s0)
 	sw	a1,-36(s0)
 	sw	zero,-20(s0)
-	j	.L13
-.L14:
+	j	.L9
+.L10:
  #APP
-# 176 "Quartus/firmware/main_quartus.c" 1
+# 173 "Quartus/firmware/main_quartus.c" 1
 	nop
 # 0 "" 2
  #NO_APP
 	lw	a3,-20(s0)
 	addi	a3,a3,1
 	sw	a3,-20(s0)
-.L13:
+.L9:
 	lw	a3,-20(s0)
 	mv	a4,a3
 	srai	a3,a3,31
 	mv	a5,a3
 	lw	a3,-36(s0)
 	mv	a2,a5
-	bgtu	a3,a2,.L14
+	bgtu	a3,a2,.L10
 	lw	a3,-36(s0)
 	mv	a2,a5
-	bne	a3,a2,.L16
+	bne	a3,a2,.L12
 	lw	a3,-40(s0)
 	mv	a2,a4
-	bgtu	a3,a2,.L14
-.L16:
+	bgtu	a3,a2,.L10
+.L12:
 	nop
 	lw	ra,44(sp)
 	lw	s0,40(sp)

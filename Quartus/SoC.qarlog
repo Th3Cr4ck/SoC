@@ -1,0 +1,44 @@
+Quartus Prime Archive log --	/home/isaac/Documents/Cinvestav/Digital/Proyecto final/Quartus/SoC.qarlog
+
+Archive:	/home/isaac/Documents/Cinvestav/Digital/Proyecto final/Quartus/SoC.qar
+Date:		Fri Aug 28 14:56:38 2026
+Quartus Prime		25.1std.0 Build 1129 10/21/2025 SC Lite Edition
+
+	=========== Files Selected: ===========
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/Quartus/SoC.qpf
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/Quartus/SoC.qsf
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/Quartus/firmware/main_fw.txt
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/AIP/aipConfigurationRegister.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/AIP/aipId.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/AIP/aipParametricMux.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/AIP/aipStatus.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/ID00005010_aip.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/ID00005010_pwm.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/ID00005020_aip.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/ID00005020_gpio.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/ID00005030_aip.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/ID00005030_cordic.sv
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/cordic/add_reg.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/cordic/add_sub.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/cordic/cordic.sv
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/cordic/fsm_reg.sv
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/cordic/multiplier.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/cordic/muxNto1.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/cordic/mux_mult_reg.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/cordic/mux_reg.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/cordic/register.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/gpio_port.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/native_aip.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/pico_mini.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/pico_mini_soc.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/picorv32.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/picorv32_Small.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/prescaler.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/pwm.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/simple_dual_port_ram_single_clk.v
+/home/isaac/Documents/Cinvestav/Digital/Proyecto final/hdl/simpleuart.v
+/opt/altera_lite/25.1std/quartus/linux64/assignment_defaults.qdf
+	======= Total: 33 files to archive =======
+
+	================ Status: ===============
+All files archived successfully.
