@@ -28,26 +28,6 @@ module pico_mini_soc (
 
     input irq_5,
 
-    input sw0,
-    input sw1,
-    input sw2,
-    input sw3,
-    input sw4,
-    input sw5,
-    input sw6,
-    input sw7,
-
-    output led0,
-    output led1,
-    output led2,
-    output led3,
-    output led4,
-    output led5,
-    output led6,
-    output led7,
-    output ledr_n,
-    output ledg_n,
-
     output o_pwm,
     inout [15:0] io_gpio
 
@@ -70,20 +50,6 @@ module pico_mini_soc (
     if (!rst) reset_cnt = 0;
     else if (ena) reset_cnt <= reset_cnt + !resetn;
   end
-
-  // leds
-  wire [7:0] leds;
-  assign led0   = leds[0];
-  assign led1   = leds[1];
-  assign led2   = leds[2];
-  assign led3   = leds[3];
-  assign led4   = leds[4];
-  assign led5   = leds[5];
-  assign led6   = leds[6];
-  assign led7   = leds[7];
-
-  assign led0 = io_gpio[0];
-  assign led1 = io_gpio[1];
 
 
   // CPU connections

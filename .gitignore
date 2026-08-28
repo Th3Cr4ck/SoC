@@ -1,6 +1,8 @@
 *.pdf
 *.bak
 *.docx
+*.bkp
+*.drawio
 
 # Quartus generated files
 Quartus/db/
